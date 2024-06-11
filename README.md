@@ -12,10 +12,10 @@ Progetto DJANGO tecnologie web
   - Windows: `.\nome_ambiente\Scripts\activate`
   - Mac/Linux: `source nome_ambiente/bin/activate`
 
-## Installare Django
+## Installare i pacchetti necessari
 - Assicurarsi che l'ambiente virtuale sia attivo
-- Installare Django con pip
-  - `pip install django`
+- Installare i pacchetti con pip
+  - `pip install -r requirements.txt`
 
 ## Creare un nuovo progetto Django
 - Utilizzare il comando Django-admin per creare un nuovo progetto
