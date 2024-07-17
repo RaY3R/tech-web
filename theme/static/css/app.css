@@ -1,0 +1,94 @@
+#search_box {
+    position: relative;
+}
+#search_box input{
+    border: none;
+    outline: none;
+}
+
+#search_box div {
+    padding: 4px 20px;
+}
+
+#search_box input:focus {
+    box-shadow: none;
+}
+
+#search__submit{
+    background-color: #ff315d;
+    border: none;
+    padding: 4px 20px;
+}
+
+#search__submit:hover {
+    background-color: #be2344;
+}
+
+#search_box, #calendar__popup {
+    max-width: 900px;
+}
+
+#calendar__popup {
+    z-index: 1000;
+    padding-top: 40px!important;
+    position: absolute;
+}
+
+#people__popup {
+    position: absolute;
+    background-color: #fff;
+    z-index: 1000;
+    padding-top: 40px!important;
+    padding-inline: 30px!important;
+    transform: translate(calc(900px/2 + 30%), 5rem);
+}
+
+#calendars__container table {
+    border-collapse: collapse!important;
+}
+
+#calendars__container table td {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    border-collapse: collapse;
+}
+
+.calendar_days span {
+    padding: 10px 12px;
+}
+
+.calendar_days span:hover {
+    border: 1px solid #333333;
+    cursor: pointer;
+    border-radius: 100px;
+}
+
+.calendar_days span.selected {
+    background-color: #222222;
+    border-radius: 100px;
+    color: #fff;
+}
+
+.calendar_days td.selected-gray {
+    background-color: #fafafa;
+    transition: background-color 0.3s linear;
+}
+
+.calendar_days .selected-gray:nth-last-child(1 of .selected-gray) {
+    border-radius: 0 100px 100px 0;
+}
+
+.calendar_days .selected-gray:nth-child(1 of .selected-gray) {
+    border-radius: 100px 0 0 100px;
+}
+
+.insertion__card {
+    width: 20rem;
+}
+
+.insertion__card > .card__image{
+    width: 100%;
+    height: 20rem;
+    object-fit: cover;
+}
