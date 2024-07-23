@@ -1,143 +1,34 @@
 {% extends 'base.html' %} {% block title %}Home{% endblock %} {% block tags %}
-{% endblock %} {% block content %}
-<div class="container m-auto p-10">
-  <div class="text-center">
-    <h1 class="text-3xl font-bold">Benvenuto su Airbnb</h1>
-    <p class="text-lg mt-4">
-      Find the perfect place to stay, for any occasion.
-    </p>
-  </div>
-  <div
-    id="search_box"
-    class="rounded-full flex border-gray-100 border-2 justify-between m-auto my-9 p-1 bg-gray-100"
-  >
-    <div id="search__place" class="flex justify-center flex-col max-w-56">
-      <input type="text" placeholder="Destinazione" class="bg-transparent" />
-    </div>
-    <div
-      id="search__start_date"
-      class="hover:bg-slate-200 transition-all rounded-full cursor-pointer overflow-hidden whitespace-nowrap text-ellipsis"
-    >
-      <span class="font-semibold text-md block">Check-in</span>
-      <span id="checkin_date" class="text-sm ">Seleziona la data</span>
-    </div>
-    <div
-      id="search__end_date"
-      class="flex-col hover:bg-slate-200 transition-all rounded-full cursor-pointer overflow-hidden whitespace-nowrap text-ellipsis"
-    >
-      <span class="font-semibold text-md block">Check-out</span>
-      <span id="checkout_date" class="text-sm">Seleziona la data</span>
-    </div>
-    <div
-      id="search__people"
-      class="flex-col hover:bg-slate-200 transition-all rounded-full cursor-pointer overflow-hidden whitespace-nowrap text-ellipsis"
-    >
-      <span class="font-semibold text-md block">Persone</span>
-      <span id="search_people_number" class="text-sm">Seleziona il numero</span>
-    </div>
-    <div
-      id="search__submit"
-      class="flex items-center gap-2 flex-row rounded-full text-white transition-all cursor-pointer "
-    >
-      <span class="flex-1 xl:b max-xl:hidden">Cerca</span>
-      <ion-icon name="search" class="flex-1"></ion-icon>
-    </div>
-    <div
-      id="calendar__popup"
-      class="rounded-3xl text-center shadow-2xl translate-y-20 bg-white flex flex-col"
-    >
-      <h4 class="text-xl font-semibold">Seleziona le date</h4>
-      <div id="calendar__controls" class="flex justify-between">
-        <button id="calendar__prev" class="text-lg font-semibold">
-          <ion-icon name="chevron-back-outline"></ion-icon>
-        </button>
-        <button id="calendar__next" class="text-lg font-semibold">
-          <ion-icon name="chevron-forward-outline"></ion-icon>
-        </button>
-      </div>
-      <div id="calendars__container" class="flex flex-row justify-center flex-wrap">
-        <div id="left__calendar" class="flex-1">
-          <h3 class="month_title text-xl font-semibold capitalize"></h3>
-          <table class="table table-fixed m-auto">
-            <thead>
-              <tr class="calendar_weekdays text-gray-400">
-                <td>Lun</td>
-                <td>Mar</td>
-                <td>Mer</td>
-                <td>Gio</td>
-                <td>Ven</td>
-                <td>Sab</td>
-                <td>Dom</td>
-              </tr>
-            </thead>
-            <tbody class="calendar__table"></tbody>
-          </table>
-        </div>
-        <div id="right__calendar" class="flex-1">
-          <h3 class="month_title text-xl font-semibold capitalize"></h3>
-          <table class="table table-fixed m-auto">
-            <thead>
-              <tr class="calendar_weekdays text-gray-400">
-                <td>Lun</td>
-                <td>Mar</td>
-                <td>Mer</td>
-                <td>Gio</td>
-                <td>Ven</td>
-                <td>Sab</td>
-                <td>Dom</td>
-              </tr>
-            </thead>
-            <tbody class="calendar__table"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    <div
-      id="people__popup"
-      class="rounded-3xl text-center shadow-2xl absolute bg-white hidden"
-    >
-      <h4 class="text-xl font-semibold">Seleziona il numero di persone</h4>
-      <div class="flex flex-row gap-5 justify-between align-middle my-10">
-        <button id="remove_people">
-          <ion-icon name="remove"></ion-icon>
-        </button>
-        <span id="people_number" class="text-xl font-bold" field-value="0"
-          >0</span
-        >
-        <button id="add_people">
-          <ion-icon name="add"></ion-icon>
-        </button>
-      </div>
-      <span class="text-gray-300">La ricerca accetta un massimo di 30 guests</span>
-    </div>
-  </div>
+{% endblock %} 
+{% block content %} 
+  {% include 'partials/search_bar.html' %}
   <div class="container">
     <h1 class="text-4xl font-bold text-center">Destinazioni in evidenza</h1>
     <div class="flex flex-row gap-8 w-100 mt-8">
-        <div class="insertion__card">
-            <img src="https://images.unsplash.com/photo-1500916434205-0c77489c6cf7" alt="Card image" class="card__image rounded-xl" />
-            <div class="card__content mt-3">
-                <h3 class="card__title font-bold">New York</h3>
-                <span>Host: xxxx</span>
-                <p class="card__description">The big apple</p>
-            </div>
+      <div class="insertion__card">
+        <img
+          src="https://images.unsplash.com/photo-1500916434205-0c77489c6cf7"
+          alt="Card image"
+          class="card__image rounded-xl"
+        />
+        <div class="card__content mt-3">
+          <h3 class="card__title font-bold">New York</h3>
+          <span>Host: xxxx</span>
+          <p class="card__description">The big apple</p>
         </div>
-        <div class="insertion__card">
-          <img src="https://images.unsplash.com/photo-1500916434205-0c77489c6cf7" alt="Card image" class="card__image rounded-xl" />
-          <div class="card__content mt-3">
-              <h3 class="card__title font-bold">New York</h3>
-              <span>Host: xxxx</span>
-              <p class="card__description">The big apple</p>
-          </div>
+      </div>
+      <div class="insertion__card">
+        <img
+          src="https://images.unsplash.com/photo-1500916434205-0c77489c6cf7"
+          alt="Card image"
+          class="card__image rounded-xl"
+        />
+        <div class="card__content mt-3">
+          <h3 class="card__title font-bold">New York</h3>
+          <span>Host: xxxx</span>
+          <p class="card__description">The big apple</p>
+        </div>
       </div>
     </div>
   </div>
-</div>
-{% endblock %} {% block scripts %}
-<script
-  type="text/javascript"
-  src="https://momentjs.com/downloads/moment-with-locales.min.js"
-></script>
-{% load static %}
-<script type="text/javascript" src="{% static 'js/calendar.js' %}"></script>
 {% endblock %}

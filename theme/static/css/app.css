@@ -6,7 +6,7 @@
     outline: none;
 }
 
-#search_box div {
+#search_box > div {
     padding: 4px 20px;
 }
 
@@ -41,6 +41,15 @@
     padding-top: 40px!important;
     padding-inline: 30px!important;
     transform: translate(calc(900px/2 + 30%), 5rem);
+}
+
+#autocomplete_location__popup {
+    background-color: #fff;
+    z-index: 1000;
+    padding-block: 20px!important;
+    padding-inline: 30px!important;
+    min-width: 300px;
+    transform: translateY(5rem);
 }
 
 #calendars__container table {
@@ -91,4 +100,14 @@
     width: 100%;
     height: 20rem;
     object-fit: cover;
+}
+
+.marker {
+    border-radius: 20%;
+    cursor: pointer;
+    background-color: #fff;
+    color: #000;
+    text-align: center;
+    padding: 3px 10px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }

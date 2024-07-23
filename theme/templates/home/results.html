@@ -1,0 +1,79 @@
+{% extends 'base.html' %} {% block title %}Results{% endblock %} {% block tags %} {% endblock %} {% block content %}
+{% include 'partials/search_bar.html' %}
+<div class="flex flex-row pt-10 w-full flex-wrap-reverse gap-10">
+    <div class="flex-1 px-10">
+        <h2 class="font-bold text-2xl">Risultati della ricerca</h2>
+        <div id="results__container" class="flex flex-wrap mt-4 gap-8 m-auto">
+            <div id="loading__spinner" class="flex flex-col items-center m-auto self-center justify-self-center">
+                <ion-icon name="square-outline" class="animate-spin text-4xl"></ion-icon>
+            </div>
+        </div>
+    </div>
+    <div class="flex-1 min-w-80  max-md:p-2">
+        <div id='map' class="flex-1 relative w-full max-md:h-96 h-lvh rounded-tl-md max-md:rounded-md"></div>
+    </div>
+  </div>
+{% endblock %}  
+
+{% block scripts %}
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.5.1/mapbox-gl.js"></script>
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiYW5kcmVhZWRldmllIiwiYSI6ImNpcTJ2dTdidzAwNXlocm0yZ2p1MmVtem8ifQ.34u2O-fYIpYB-tHyyQ87nw';
+    const map = new mapboxgl.Map({
+        style: 'mapbox://styles/mapbox/streets-v11', // style URL
+        container: 'map', // container ID
+        center: [10.9, 40], // starting position [lng, lat]. Note that lat must be set between -90 and 90
+        zoom: 6
+    });
+    map.addControl(new mapboxgl.NavigationControl());
+</script>
+<script>
+    $(document).ready(function() {
+        let params = new URLSearchParams(window.location.search);
+        let markers = [];
+        $.ajax('/api/search', {
+            method: 'GET',
+            data: {
+                location: params.get('location'),
+                checkin: params.get('checkin'),
+                checkout: params.get('checkout'),
+                guests: params.get('guests')
+            },
+            success: function(data) {
+                $('#loading__spinner').remove();
+                data.data.forEach(result => {
+                    $('#results__container').append(`
+                    <div class="insertion__card">
+                        <div class="absolute p-5">
+                            <span class="font-bold text-md bg-white rounded-md py-1 px-3">${result.price_per_night} € ${result.fixed_price ? '' : 'p.p'}</span>
+                        </div>
+                        <img
+                            src="${result.cover_image}"
+                            alt="${result.name}"
+                            class="card__image rounded-xl"
+                        />
+                        <div class="card__content mt-3">
+                        <h3 class="card__title font-bold">${result.title}</h3>
+                        <span>Host: ${result.host}</span>
+                        <p class="card__description">${result.description}</p>
+                        <p>Totale: ${result.total_price} €</p>
+                        </div>
+                    </div>`);
+                    const el = document.createElement('div');
+                    el.className = 'marker';
+                    el.innerHTML = `<span class="font-bold text-md">${result.price_per_night} €</span>`
+                    const marker = new mapboxgl.Marker(el)
+                        .setLngLat([result.longitude, result.latitude])
+                        .addTo(map);
+                    markers.push(marker);
+                })
+                var bounds = new mapboxgl.LngLatBounds();
+                markers.forEach(marker => bounds.extend(marker.getLngLat()));
+                map.fitBounds(bounds, {
+                    padding: 300
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

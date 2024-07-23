@@ -1,7 +1,7 @@
 <div class="w-100 m-auto text-center p-4 bg-black text-white">
     <nav class="flex items-center justify-between">
         <div class="flex items-center">
-            <h1 class="ml-2 text-lg font-semibold">Airbnb</h1>
+            <a href="/" class="ml-2 text-lg font-semibold">Airbnb</a>
         </div>
         <ul class="flex items-center space-x-4">
             <li><a href="#" class="hover:text-slate-100">Home</a></li>
@@ -9,5 +9,18 @@
             <li><a href="#" class="hover:text-slate-100">Services</a></li>
             <li><a href="#" class="hover:text-slate-100">Contact</a></li>
         </ul>
+        <div class="flex items-center space-x-4">
+            
+            
+            {% if request.user.is_authenticated %}
+                <span>Ciao, {{request.user.username}}!</span>
+                <form action="/logout" method="post"> 
+                    {% csrf_token %}
+                    <button type="submit" class="hover:text s-late-100">Logout</a>
+                </form>
+            {% else %}
+                <a href="/login" class="hover:text-slate-100">Login</a>
+            {% endif %}
+        </div>
     </nav>
 </div>
