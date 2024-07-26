@@ -1,9 +1,7 @@
 import datetime
 from django.http import JsonResponse
-from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework import permissions
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from api.serializers import InsertionSerializer
 from insertion.models import Insertion, Reservation
 from geopy import distance, Nominatim
@@ -33,7 +31,7 @@ class InsertionViewSet(viewsets.ModelViewSet):
     serializer_class = InsertionSerializer
     permission_classes = [permissions.AllowAny]
     
-    def get(self, request):
+    def list(self, request):
         query_params = request.query_params.copy()
         if query_params.get('checkin') is None \
         or query_params.get('checkout') is None \
@@ -83,4 +81,24 @@ class LocationAutocompleteViewSet(viewsets.ViewSet):
         cities = list(set([insertion._metadata['city'] for insertion in queryset_cities]))
         countries = list(set([insertion._metadata['country'] for insertion in queryset_countries]))
         return JsonResponse(cities + countries, safe=False)
+
+class AccountEditPicViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def list(self, request):
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
     
+    def post(self, request):
+        if request.FILES.get('picture') is None:
+            return JsonResponse({'error': 'Missing required params'}, status=400)
+        if request.FILES['picture'].size > 5242880:
+            return JsonResponse({'error': 'File size too large'}, status=400)
+        if request.FILES['picture'].content_type not in ['image/jpeg', 'image/png']:
+            return JsonResponse({'error': 'Invalid file format'}, status=400)
+        if request.FILES['picture'].size == 0:
+            return JsonResponse({'error': 'Empty file'}, status=400)
+        if request.FILES['picture'].name.split('.')[-1] not in ['jpeg', 'jpg', 'png']:
+            return JsonResponse({'error': 'Invalid file extension'}, status=400)
+        request.user.pic = request.FILES['picture']
+        request.user.save()
+        return JsonResponse({'message': 'Profile picture updated successfully'}, status=200)

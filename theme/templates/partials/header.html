@@ -4,20 +4,16 @@
             <a href="/" class="ml-2 text-lg font-semibold">Airbnb</a>
         </div>
         <ul class="flex items-center space-x-4">
-            <li><a href="#" class="hover:text-slate-100">Home</a></li>
-            <li><a href="#" class="hover:text-slate-100">About</a></li>
-            <li><a href="#" class="hover:text-slate-100">Services</a></li>
-            <li><a href="#" class="hover:text-slate-100">Contact</a></li>
+            <li><a href="/" class="hover:text-slate-100">Home</a></li>
         </ul>
         <div class="flex items-center space-x-4">
             
             
             {% if request.user.is_authenticated %}
-                <span>Ciao, {{request.user.username}}!</span>
-                <form action="/logout" method="post"> 
-                    {% csrf_token %}
-                    <button type="submit" class="hover:text s-late-100">Logout</a>
-                </form>
+                <a href="/account" class="flex flex-row gap-2 items-center">
+                    <span>Account</span>
+                    <img src="{{ request.user.pic.url }}" class="profile__pic" />
+                </a>
             {% else %}
                 <a href="/login" class="hover:text-slate-100">Login</a>
             {% endif %}

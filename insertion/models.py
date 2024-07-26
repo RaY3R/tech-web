@@ -1,9 +1,5 @@
-from array import array
-from calendar import c
-from operator import is_
-from pyexpat import features
 from django.db import models
-from django.contrib.auth.models import User
+from user.models import CustomUser
 
 # Create your models here.
 class Insertion(models.Model):
@@ -12,7 +8,7 @@ class Insertion(models.Model):
     rules = models.JSONField(default=list)
     _metadata = models.JSONField(default=dict)
     features = models.JSONField(default=dict)
-    host = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    host = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True, null=False)
@@ -49,7 +45,7 @@ class Reservation(models.Model):
     end_date = models.DateField(null=False)
     guests = models.IntegerField(null=False)
     total_price = models.FloatField(null=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=False)
     is_paid = models.BooleanField(default=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     

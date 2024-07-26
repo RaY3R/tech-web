@@ -111,3 +111,26 @@
     padding: 3px 10px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
+
+.signup__form input[type='text'], input[type='email'], input[type='password'], input[type='date'], 
+.login__form input[type='text'], input[type='password']{
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 5px;
+}
+
+.helptext {
+    font-size: 0.8rem;
+    color: #444;
+}
+
+.errorlist {
+    color: red;
+}
+
+.profile__pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    object-fit: cover;
+}

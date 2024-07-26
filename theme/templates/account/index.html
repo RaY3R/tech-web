@@ -1,0 +1,50 @@
+{% extends 'layouts/account.html' %}
+
+{% block title %}Il tuo profilo{% endblock %}
+
+{% block content1 %} 
+<div class="w-full flex flex-col gap-5 items-start">
+    <div class="profile flex flex-row items-center gap-10 w-fit px-10 py-5 rounded-md">
+        <div class="justify-center items-center flex-row flex">
+            <img class="profile__pic relative border-[1px] border-gray-400 shadow-sm" style="min-width: 200px; height: 200px;" src="{{ request.user.pic.url }}" alt="profile pic" />
+            <a id="open_pic_modal" href="#" class="opacity-0 hover:opacity-40 absolute bg-white rounded-full w-[200px] h-[200px] text-center">
+                <ion-icon name="pencil" class="text-3xl transition-allstroke-2 stroke-black transition-all h-full"/>
+            </a>
+        </div>
+        <div class="profile__info">
+            <h4 class="text-2xl font-semibold">{{ request.user.first_name }} {{ request.user.last_name }}</h4>
+            <p class="font-thin">Ultimo accesso: {{ request.user.last_login }} </p>
+        </div>
+    </div>
+    <h1 class="text-3xl font-bold">Informazioni sul tuo profilo</h1>
+    <div class="flex flex-row w-full gap-5">
+        <div class="flex-1">
+            <span class="text-xl font-semibold">Email</span>
+            <span class="block text-xl font-thin ">{{ request.user.email }}</span>
+        </div>
+        <div class="flex-1">
+            <span class="text-xl font-semibold">Data di nascita</span>
+            <span class="block text-xl font-thin ">{{ request.user.birth_date }}</span>
+        </div>
+    </div>
+    <div class="pic__modal hidden border-2 p-4 shadow-md absolute z-10 bg-white rounded-md left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        <div class="modal__content">
+            <div class="modal__header flex justify-between">
+                <h4 class="text-lg font-semibold">Cambia la tua foto profilo</h4>
+                <a href="#" class="modal__close">
+                    <ion-icon name="close" class="text-2xl"/>
+                </a>
+            </div>
+            <div class="modal__body">
+                <form id="change_pic_form" action="" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="file" name="picture" id="pic" class="w-full p-2 border-2 border-gray-200 rounded-md mb-4"/>
+                    <button type="submit" class="w-full p-2 bg-black text-white rounded-md">Salva</button>
+                    <span id="error_modal_message" class="text-red-400"></span>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content1 %} 

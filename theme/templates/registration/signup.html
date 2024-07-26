@@ -2,18 +2,18 @@
 {% endblock %} 
 {% block content %} 
 <div class="w-full flex flex-col justify-center items-center">
-    <div class="login-card rounded-xl shadow-xl p-10 my-32 w-80">
-        <h2 class="text-2xl font-bold text-center">Accedi</h2>
+    <div class="login-card rounded-xl shadow-xl p-10 my-32">
+        <h2 class="text-2xl font-bold text-center">Registrazione</h2>
         {% if messages %}
             {% for message in messages %}
                 <div class="bg-red-500 text-white p-2 rounded-md text-center mt-3">{{ message }}</div>
             {% endfor %}
         {% endif %}
-        <form action="" method="POST" class="login__form flex flex-col gap-4 mt-4 w-full"> 
+        <form action="" method="POST" class="signup__form flex flex-col gap-4 mt-4 w-full"> 
             {% csrf_token %}
             {{ form }}
-            <button type="submit" class="text-white rounded-md p-2 items-center flex justify-center gap-3" style="background-color: #ff315d;">Accedi</button>
-            <a href="/signup" class="text-white rounded-md p-2 items-center flex justify-center gap-3" style="background-color: #292929;">Registrati</a>
+            <button type="submit" class="text-white rounded-md p-2 items-center flex justify-center gap-3" style="background-color: #ff315d;">Registrati</button>
+            <a href="/login" class="text-white rounded-md p-2 items-center flex justify-center gap-3" style="background-color: #292929;">Hai già un account?</a>
         </form>
     </div>
 </div>

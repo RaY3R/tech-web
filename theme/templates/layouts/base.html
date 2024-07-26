@@ -23,7 +23,7 @@
     <title>Airbnb - {% block title %}{% endblock %}</title>
   </head>
   <body>
-    {% include 'header.html' %}
+    {% include 'partials/header.html' %}
     <div class="w-full">
       {% block content %}
       {% endblock content %} 
@@ -33,6 +33,6 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     {% block scripts %}{% endblock scripts %}
-    {% include 'footer.html' %}
+    {% include 'partials/footer.html' %}
   </body>
 </html>
