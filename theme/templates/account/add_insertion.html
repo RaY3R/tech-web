@@ -1,0 +1,149 @@
+{% extends 'layouts/account.html' %}
+
+{% block tag %}
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
+{% endblock %}
+
+{% block title %}Nuovo immobile{% endblock %}
+
+{% block content1 %} 
+<div class="w-full flex flex-col gap-5 items-start">
+    <h1 class="text-3xl font-bold">Aggiungi un nuovo immobile</h1>
+    {% if messages %}
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    {% endif %}
+    <form action="" method="POST" class="flex flex-col w-full gap-5">
+        {% csrf_token %}
+        <div class="container">
+            <h1 class="text-xl font-bold">Informazioni generali</h1>
+            <div class="flex flex-col gap-4 mt-4">
+                <label for="" class="">Titolo annuncio *</label>
+                <input type="text" name="title" placeholder="Stupenda villa con piscina a Roma con giardino privato" class="p-2 border-2 border-gray-200 rounded-md" />
+                <label for="description">Descrizione *</label>
+                <textarea name="description" placeholder="Stupenda villa situata nei pressi di..." class="p-2 border-2 border-gray-200 rounded-md" value="{{ form.description.value }}"></textarea>
+            </div>
+        </div>
+        <div class="container">
+            <h1 class="text-xl font-bold">Dettagli</h1>
+            <div class="flex flex-row mt-4 gap-10">
+                <div class="flex flex-col">
+                    <label for="max_guests">Max ospiti *</label>
+                    <input type="number" name="max_guests" min="1" max="30" value="4" class="p-2 border-2 border-gray-200 rounded-md lg:w-[13rem]" />
+                </div>
+                <div class="flex flex-col">
+                    <label for="">Tipo di alloggio *</label>
+                    <select name="" id="" class="p-2 border-2 border-gray-200 rounded-md lg:w-[13rem]">
+                        <option value="" selected disabled>Seleziona la tipologia</option>
+                        <option value="APARTMENT">Appartamento intero</option>
+                        <option value="VILLA">Villa intera</option>
+                        <option value="">Stanza</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex flex-col mt-4" >
+                <label for="">Regole dell'alloggio *</label>
+                <textarea name="rules" id="" class="p-2 border-2 border-gray-200 rounded-md" placeholder="1. Vietato portare animali..."></textarea>
+            </div>
+        </div>
+        <div class="container">
+            <h1 class="text-xl font-bold">Posizione</h1>
+            <div class="input-group flex flex-col mt-3">
+                <label for="address">Indirizzo completo *</label>
+                <input name="address" type="text" class="p-2 border-2 border-gray-200 rounded-md lg:w-[23rem]" placeholder="Viale Risorgimento 30/A, Roma...">
+            </div>
+            <div class="map__container mt-4">
+                <span>Seleziona la posizione dell'immobile sulla mappa</span>
+                <div id="map" class="rounded-lg" style="height: 400px; width: 100%"></div>
+                <span>Coordinate selezionate: <span id="coords"></span></span>
+            </div>
+        </div>
+        <input type="hidden" name="latitude" value="0" />
+        <input type="hidden" name="longitude" value="0" />
+        <div class="container flex flex-col gap-4">
+            <h1 class="text-xl font-bold">Caratteristiche</h1>
+            <div class="flex flex-row flex-wrap gap-10">
+                <div class="flex gap-10 max-lg:w-full">
+                    <div class="flex flex-col w-full">
+                        <label for="baths">Numero bagni *</label>
+                        <input type="number" name="bathrooms" value="1" min="1" max="30" class="p-2 border-2 border-gray-200 rounded-md lg:w-[13rem]" />
+                    </div>
+                    <div class="flex flex-col w-full">
+                        <label for="baths">Numero camere da letto *</label>
+                        <input type="number" name="bedrooms" value="1" min="1" max="30" class="p-2 border-2 border-gray-200 rounded-md lg:w-[13rem]" />
+                    </div>
+                </div>
+                <div class="flex gap-10 max-lg:w-full">
+                    <div class="flex flex-col w-full">
+                        <label for="baths">Letti singoli *</label>
+                        <input type="number" name="single_beds" value="1" min="0" max="30" class="p-2 border-2 border-gray-200 rounded-md lg:w-[13rem]" />
+                    </div>
+                    <div class="flex flex-col w-full">
+                        <label for="baths">Letti matrimoniali *</label>
+                        <input type="number" name="king_beds" value="1" min="0" max="30" class="p-2 border-2 border-gray-200 rounded-md lg:w-[13rem]" />
+                    </div>
+                </div>
+            </div>
+            <span class="text-lg font-semibold">Servizi</span>
+            <span>Seleziona i servizi di cui l'alloggio dispone</span>
+           <div class="services__container">
+                {% for service in services %}
+                    <div class="services__item flex items-center flex-row gap-3" data-id="{{service.id}}" data-service-name="{{service.name}}">
+                        <ion-icon name="{{service.icon}}" class="text-sm"></ion-icon>
+                        <span class="">{{ service.name }}</span>
+                    </div>
+                {% endfor %}
+                <input type="hidden" name="services" value="{}">
+           </div>
+        </div>
+        <div class="w-full mt-10">
+            <button type="submit" class="bg-[#ff315d] hover:bg-[#e22c54] text-white p-2 rounded-md">Salva nuovo alloggio</button>
+        </div>
+    </form>
+    
+</div>
+
+{% endblock content1 %} 
+
+{% block scripts %}
+
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.5.1/mapbox-gl.js"></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiYW5kcmVhZWRldmllIiwiYSI6ImNpcTJ2dTdidzAwNXlocm0yZ2p1MmVtem8ifQ.34u2O-fYIpYB-tHyyQ87nw';
+    const map = new mapboxgl.Map({
+        style: 'mapbox://styles/mapbox/streets-v12', // style URL
+        container: 'map', // container ID
+        center: [10.9, 40], // starting position [lng, lat]. Note that lat must be set between -90 and 90
+        zoom: 6
+    });
+    map.addControl(new mapboxgl.NavigationControl());
+    map.addControl(
+        new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl
+        })
+    );
+    const marker = new mapboxgl.Marker();
+    map.on('click', (e) => {
+        marker.setLngLat([e.lngLat.lng, e.lngLat.lat])
+        .addTo(map);
+        $('#coords').text(`${e.lngLat.lng.toFixed(4)}, ${e.lngLat.lat.toFixed(4)}`);
+        $('input[name="latitude"]').val(e.lngLat.lat.toFixed(4));
+        $('input[name="longitude"]').val(e.lngLat.lng.toFixed(4));
+    });
+</script>
+<script>
+    $('#select_position_btn').click((e) => {
+        e.preventDefault();
+        $('.map__container').toggleClass('hidden');
+        map.resize();
+    });
+
+    $('.services__item').click((e) => {
+        $(e.currentTarget).toggleClass('active');
+        $('input[name="services"]').val(JSON.stringify(Array.from($('.services__item.active')).map((el) => $(el).data('id'))));
+    });
+</script>
+{% endblock %}

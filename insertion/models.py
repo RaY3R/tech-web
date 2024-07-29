@@ -5,20 +5,45 @@ from user.models import CustomUser
 class Insertion(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
-    rules = models.JSONField(default=list)
-    _metadata = models.JSONField(default=dict)
-    features = models.JSONField(default=dict)
+    rules = models.TextField()
+    services = models.JSONField(default=list)
+    single_beds = models.IntegerField(null=False, default=1)
+    king_beds = models.IntegerField(null=False, default=0)
+    bedrooms = models.IntegerField(null=False, default=1)
+    bathrooms = models.IntegerField(null=False, default=0)
     host = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True, null=False)
-    cover_image = models.ImageField(upload_to='covers', blank=True, null=True)
+    cover_image = models.ImageField(upload_to='covers', blank=False, null=False)
     latitude = models.FloatField(null=False)
     longitude = models.FloatField(null=False)
+    address = models.CharField(max_length=100, null=True)
     max_guests = models.IntegerField(null=False, default=1)
-    
+
     def __str__(self):
         return self.title
+    
+    def get_services():
+        return [
+            {'name': 'Wi-Fi', 'icon': 'wifi-outline', 'id': 1},
+            {'name': 'Giardino privato', 'icon': 'flower-outline', 'id': 2},
+            {'name': 'Piscina', 'icon': 'water-outline', 'id': 3},
+            {'name': 'Cucina', 'icon': 'wine-outline', 'id': 4},
+            {'name': 'TV', 'icon': 'tv-outline', 'id': 5},
+            {'name': 'Aria condizionata', 'icon': 'snow-outline', 'id': 6},
+            {'name': 'Riscaldamento', 'icon': 'thermometer-outline', 'id': 7},
+            {'name': 'Lavatrice', 'icon': 'cube-outline', 'id': 8},
+            {'name': 'Asciugatrice', 'icon': 'cube-outline', 'id': 9},
+            {'name': 'Lavastoviglie', 'icon': 'cube-outline', 'id': 10},
+            {'name': 'Parcheggio', 'icon': 'car-outline', 'id': 11},
+            {'name': 'Animali ammessi', 'icon': 'paw-outline', 'id': 12},
+            {'name': 'Colazione inclusa', 'icon': 'fast-food-outline', 'id': 13},
+            {'name': 'Vista mare', 'icon': 'boat-outline', 'id': 14},
+            {'name': 'Rilevatore di fumo', 'icon': 'alert-circle-outline', 'id': 15},
+            {'name': 'Asciugacapelli', 'icon': 'cube-outline', 'id': 16},
+            {'name': 'Bagno privato', 'icon': 'eye-off-outline', 'id': 17},
+        ]
     
     class Meta:
         verbose_name_plural = 'Insertions'

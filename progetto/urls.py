@@ -9,6 +9,6 @@ urlpatterns = [
     path('', include('home.urls')),
     path('insertion/', include('insertion.urls')),
     path('api/', include('api.urls')),
-    path('', include('user.urls')),
+    path('', include('user.urls', namespace='user')),
     path("__reload__/", include("django_browser_reload.urls"))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

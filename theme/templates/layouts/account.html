@@ -1,19 +1,30 @@
 {% extends "layouts/base.html" %}
 {% block title %}Account{% endblock %} 
+{% load custom_tags %}
 {% block tags %}
 {% endblock %}
 {% block content %}
 <div class="w-full flex flex-col">
     <div class="flex flex-row flex-wrap">
-        <div class="min-w-[300px] shadow-sm border-2 p-10 max-lg:flex-1">
-            <h4 class="text-lg font-semibold text-center">Account</h4>
-            <div class="border-2 rounded-md"></div>
-            <div class="flex flex-col ">
-                <a href="" class="p-2 ">Il tuo profilo</a>
-                <a href="" class="p-2 ">I tuoi soggiorni</a>
-                <a href="" class="p-2 ">Cambia password</a>
-                <a href="/logout" class="p-2 text-red-400">Esci</a>
+        <div class="min-w-[300px] shadow-2xl p-10 max-lg:flex-1 rounded-xl m-10 h-fit">
+            <h4 class="text-lg font-bold p-4">Account</h4>
+            <div class="border-b-2 rounded-md"></div>
+            <div class="account__nav_items flex flex-col">
+                <a href="{% url 'user:profile' %}" class="{% url_active 'user:profile' %} p-4 flex items-center gap-2 "><ion-icon name="person-outline" ></ion-icon> Il tuo profilo</a>
+                <a href="{% url 'user:bookings' %}" class="{% url_active 'user:bookings' %} p-4 flex items-center gap-2"><ion-icon name="home-outline" ></ion-icon> I tuoi soggiorni</a>
+                <a href="{% url 'user:changepassword' %}" class="{% url_active 'user:changepassword' %} p-4 flex items-center gap-2"><ion-icon name="key-outline" ></ion-icon>Cambia password</a>
+                <a href="{% url 'user:logout' %}" class="p-4 text-red-400 flex items-center gap-2"><ion-icon name="exit-outline" ></ion-icon>Esci</a>
             </div>
+            {% if request.user.role == 'HOST' %}
+            <h4 class="text-lg font-bold p-4">Impostazioni Host</h4>
+            <div class="border-b-2 rounded-md"></div>
+            <div class="account__nav_items flex flex-col">
+                <a href="" class="p-4 flex items-center gap-2"><ion-icon name="home-outline" ></ion-icon> I tuoi immobili</a>
+                <a href="" class="p-4 flex items-center gap-2"><ion-icon name="home-outline" ></ion-icon> Le tue prenotazioni</a>
+                <a href="" class="p-4 flex items-center gap-2"><ion-icon name="cash-outline" ></ion-icon> Pagamento</a>
+                <a href="{% url 'user:newinsertion' %}" class="{% url_active 'user:newinsertion' %} p-4 flex items-center gap-2"><ion-icon name="add-outline" ></ion-icon> Aggiungi un immobile</a>
+            </div>
+            {% endif %}
         </div>
         <div class="p-8 flex-grow">
             {% block content1 %}

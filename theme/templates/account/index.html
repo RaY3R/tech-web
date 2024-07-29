@@ -4,7 +4,7 @@
 
 {% block content1 %} 
 <div class="w-full flex flex-col gap-5 items-start">
-    <div class="profile flex flex-row items-center gap-10 w-fit px-10 py-5 rounded-md">
+    <div class="profile flex flex-row flex-wrap justify-center items-center gap-10 w-fit px-10 py-5 rounded-md">
         <div class="justify-center items-center flex-row flex">
             <img class="profile__pic relative border-[1px] border-gray-400 shadow-sm" style="min-width: 200px; height: 200px;" src="{{ request.user.pic.url }}" alt="profile pic" />
             <a id="open_pic_modal" href="#" class="opacity-0 hover:opacity-40 absolute bg-white rounded-full w-[200px] h-[200px] text-center">
@@ -12,19 +12,23 @@
             </a>
         </div>
         <div class="profile__info">
-            <h4 class="text-2xl font-semibold">{{ request.user.first_name }} {{ request.user.last_name }}</h4>
+            <div class="flex items-center gap-2">
+                <h4 class="text-2xl font-semibold">{{ request.user.first_name }} {{ request.user.last_name }} </h4>
+                <span class="text-sm font-bold bg-gray-300 px-2 py-1 rounded-xl">{{ request.user.role }}</span>
+            </div>
             <p class="font-thin">Ultimo accesso: {{ request.user.last_login }} </p>
+            
         </div>
     </div>
-    <h1 class="text-3xl font-bold">Informazioni sul tuo profilo</h1>
+    <h1 class="text-2xl font-bold">Informazioni sul tuo profilo</h1>
     <div class="flex flex-row w-full gap-5">
         <div class="flex-1">
             <span class="text-xl font-semibold">Email</span>
-            <span class="block text-xl font-thin ">{{ request.user.email }}</span>
+            <span class="block text-lg font-thin ">{{ request.user.email }}</span>
         </div>
         <div class="flex-1">
             <span class="text-xl font-semibold">Data di nascita</span>
-            <span class="block text-xl font-thin ">{{ request.user.birth_date }}</span>
+            <span class="block text-lg font-thin ">{{ request.user.birth_date }}</span>
         </div>
     </div>
     <div class="pic__modal hidden border-2 p-4 shadow-md absolute z-10 bg-white rounded-md left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
