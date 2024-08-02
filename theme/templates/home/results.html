@@ -44,20 +44,25 @@
                 data.data.forEach(result => {
                     $('#results__container').append(`
                     <div class="insertion__card">
-                        <div class="absolute p-5">
-                            <span class="font-bold text-md bg-white rounded-md py-1 px-3">${result.price_per_night} € ${result.fixed_price ? '' : 'p.p'}</span>
-                        </div>
-                        <img
-                            src="${result.cover_image}"
-                            alt="${result.name}"
-                            class="card__image rounded-xl"
-                        />
-                        <div class="card__content mt-3">
-                        <h3 class="card__title font-bold">${result.title}</h3>
-                        <span>Host: ${result.host}</span>
-                        <p class="card__description">${result.description}</p>
-                        <p>Totale: ${result.total_price} €</p>
-                        </div>
+                        <a href="insertion/${result.uuid}${document.location.search.toString()}" class="card__link">
+                            <div class="absolute p-5">
+                                <span class="font-bold text-md bg-white rounded-md py-1 px-3">${result.price_per_night} € ${result.fixed_price ? '' : 'p.p'}</span>
+                            </div>
+                            <img
+                                src="${result.cover_image}"
+                                alt="${result.title}"
+                                class="card__image rounded-xl"
+                            />
+                            <div class="card__content mt-3">
+                                <h3 class="card__title font-bold">${result.title}</h3>
+                                <div class="flex items-center"> 
+                                    <ion-icon name="pin"></ion-icon> 
+                                    <p class="font-semibold"> ${result.metadata.city}</p> 
+                                </div>
+                                <p>Host: ${result.host}</p>
+                                <p>Totale: ${result.total_price} €</p>
+                            </div>
+                        </a>
                     </div>`);
                     const el = document.createElement('div');
                     el.className = 'marker';

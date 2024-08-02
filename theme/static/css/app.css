@@ -96,8 +96,14 @@
     width: 20rem;
 }
 
-.insertion__card > .card__image{
-    width: 100%;
+@media screen and (max-width: 800px) {
+    .insertion__card {
+        width: 100%;
+    }
+}
+
+.insertion__card .card__image {
+    min-width: 20rem;
     height: 20rem;
     object-fit: cover;
 }
@@ -122,10 +128,6 @@
 .helptext {
     font-size: 0.8rem;
     color: #444;
-}
-
-.errorlist {
-    color: red;
 }
 
 .profile__pic {
@@ -173,4 +175,12 @@
     border: 1px solid #000000;
     transition: all 0.1s ease-in-out;
     cursor: pointer;
+}
+
+.error__message, .errorlist li {
+    padding: 5px 20px;
+    background-color: #ff315d;
+    border-radius: 10px;
+    color: white;
+    margin-top: 5px;
 }

@@ -1,0 +1,127 @@
+{% extends 'layouts/base.html' %} 
+{% block title %}{{ insertion.title }}{% endblock %} 
+{% block tags %}
+{% endblock %} 
+{% block content %} 
+  {% include 'partials/search_bar.html' %}
+  <div class="container w-full flex justify-center m-auto">
+    <div class="flex flex-col gap-5 px-8 lg:px-[12rem] max-lg:w-full" >
+        <h1 class="text-3xl font-bold text-left">{{ insertion.title }}</h1>
+        <div class="insertion__images">
+            <img src="{{ insertion.cover_image.url }}" alt="Card image" class="rounded-xl w-full h-80 object-cover" />
+        </div>
+        <div class="flex flex-wrap gap-10 w-full">
+            <div class="flex flex-col flex-grow gap-5 shadow-lg p-10 rounded-lg max-lg:w-full">
+                <div class="flex flex-row gap-2 items-center">
+                    <ion-icon name="location-outline" class="text-2xl"></ion-icon>
+                    <h1 class="text-2xl font-semibold">{{ insertion.metadata.city }}, {{ insertion.metadata.country }}</h1>
+                </div>
+                <div class="flex gap-5">
+                    <div class="flex items-center gap-2">
+                        <ion-icon name="man-outline" class="text-lg"></ion-icon>
+                        <p class="text-lg">{{ insertion.max_guests }} ospiti</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <ion-icon name="bed-outline" class="text-lg"></ion-icon>
+                        <p class="text-lg">{{ insertion.bedrooms }} camere</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <ion-icon name="water-outline" class="text-lg"></ion-icon>
+                        <p class="text-lg">{{ insertion.bathrooms }} bagni</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <ion-icon name="bed-outline" class="text-lg"></ion-icon>
+                    <p class="text-lg">{{ insertion.king_beds }} lett{% if insertion.king_beds == 1 %}o{% else %}i{% endif %} matrimonial{% if insertion.king_beds == 1 %}e{% else %}i{% endif %}</p>
+                    <p class="text-lg">{{ insertion.single_beds }} lett{% if insertion.single_beds == 1 %}o{% else %}i{% endif %} singol{% if insertion.single_beds == 1 %}o{% else %}i{% endif %}</p>
+                </div>
+            </div>
+            <div class="flex flex-col gap-5 shadow-lg p-10 rounded-lg max-lg:w-full min-w-[340px]">
+                {% if insertion.current_query_availability is not None %}
+                <div class="flex flex-row gap-2 items-center">
+                    {% if insertion.current_query_availability.is_fixed_price %}
+                        <p class="text-lg font-thin"><span class="text-3xl font-semibold">{{ insertion.current_query_availability.price_per_night|floatformat:"0" }} € </span> a notte</p>
+                        {% else %}
+                        <p class="text-lg">Prezzo a notte: <span class="font-semibold">{{ insertion.current_query_availability.price_per_night_per_person|floatformat:"0" }} €</span></p>
+                    {% endif %}
+                </div>
+                <div class="flex flex-col gap-2">
+                    <p class="text-lg">Dal <span class="font-semibold">{{ insertion.current_query_availability.start_date }}</span></p>
+                    <p class="text-lg">Al&nbsp;&nbsp; <span class="font-semibold">{{ insertion.current_query_availability.end_date }}</p>
+                </div>
+                <div class="border-b-2 bg-gray-200"></div>
+                <div class="flex justify-between items-center">
+                    <p class="text-lg font-bold">Totale </p>
+                    <p class="font-semibold">{{ insertion.total_price|floatformat:"0" }} €</p>
+                </div>
+                <div class="flex">
+                    <button id="reserve_button" class="bg-[#ff315d] text-white p-2 rounded-lg w-full hover:bg-[#be2344] transition-all">Prenota</button>
+                </div>
+                {% else %}
+                <div class="flex flex-col gap-2">
+                    <p class="text-lg">Nessuna disponibilità per le date selezionate</p>
+                    <p class="text-lg">Prova a selezionare altre date</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="flex gap-10 justify-between max-w-[54rem] max-lg:w-full">
+            <div class="flex flex-col gap-5 shadow-lg p-10 rounded-lg">
+                <h1 class="text-2xl font-semibold">Descrizione</h1>
+                {{ insertion.description }}
+                <div class="border-b-2 border-gray-300"></div>
+                <h1 class="text-2xl font-semibold">Servizi</h1>
+                <div class="flex flex-wrap gap-2">
+                    {% for service in insertion.services_detailed %}
+                        <div class="flex items-center gap-2">
+                            <ion-icon name="{{ service.icon }}" class="text-lg"></ion-icon>
+                            <p class="text-lg">{{ service.name }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="border-b-2 border-gray-300"></div>
+                <h1 class="text-2xl font-semibold">Regole della casa</h1>
+                <p class="text-lg">{{ insertion.rules|linebreaks }}</p>
+                <div class="border-b-2 border-gray-300"></div>
+            </div>
+        </div>
+        <div class="flex gap-10 justify-between max-lg:w-full">
+            <div class="flex flex-col gap-5 shadow-lg p-10 rounded-lg w-full">
+                <h1 class="text-2xl font-semibold">Host</h1>
+                <div class="flex items-center gap-3">
+                    <img src="{{ insertion.host.pic.url }}" alt="Host image" class="rounded-full w-20 h-20 object-cover" />
+                <p class="text-lg">{{ insertion.host.first_name }} {{ insertion.host.last_name }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+  </div>
+{% endblock %}
+
+{% block scripts %}
+{% if insertion.current_query_availability is not None %}
+<script defer="defer">
+    $('#reserve_button').click(function (){
+        $.ajax({
+            type: 'POST',
+            url: '/api/reserve/',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                insertion_id: '{{ insertion.uuid }}',
+                guests: new URLSearchParams(window.location.search).get('guests'),
+                checkin: new URLSearchParams(window.location.search).get('checkin'),
+                checkout: new URLSearchParams(window.location.search).get('checkout'),
+                availability_id: '{{ insertion.current_query_availability.id }}'
+            },
+            success: function (data) {
+                window.location.href = '/account/bookings'
+            },
+            error: function (data) {
+                console.log(data)
+            }
+        });
+    })
+</script>
+{% endif %}
+{% endblock %}

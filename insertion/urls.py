@@ -5,5 +5,5 @@ from . import views
 app_name = 'insertion'
 
 urlpatterns = [
-    path('<str:id>', views.index, name='index'),
+    path('<str:uuid>', views.index, name='details'),
 ]

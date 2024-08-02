@@ -1,0 +1,90 @@
+{% extends 'layouts/account.html' %}
+
+{% block tag %}
+{% endblock %}
+
+{% block title %}Modifica immobile{% endblock %}
+
+{% block content1 %}
+<div class="w-full flex flex-col gap-5 items-start">
+    <h1 class="text-3xl font-bold">Modifica immobile</h1>
+    <div class="flex gap-5 items-center">
+        <img src="{{ insertion.cover_image.url }}" alt="Card image" class="rounded-xl w-80 h-80 object-cover" />
+        <div class="flex flex-col gap-5">
+            <h2 class="text-xl font-semibold">{{ insertion.title }}</h2>
+            <span>Aggiunto il {{ insertion.created_at }}</span>
+            <span>Stato: {% if insertion.is_active  %}Attivo{% else %}Non attivo{% endif %}</span>
+            <form method="delete" class="flex flex-col w-full gap-5">
+                {% csrf_token %}
+                <button type="submit" class="p-2 px-10 bg-red-500 text-white rounded-md w-fit items-center flex gap-2"> <ion-icon name="alert-circle-outline" class="text-white" ></ion-icon> Elimina immobile</button>
+            </form>
+        </div>
+    </div>
+   
+    <h2 class="text-xl font-semibold">Aggiungi Disponibilità</h2>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="error__message">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    <form action="" method="POST" class="flex flex-col w-full gap-5">
+        {% csrf_token %}
+        <div class="flex gap-5">
+            <div class="flex flex-col">
+                <label for="start_date">Inizio *</label>
+                <input type="date" name="start_date" class="shadow-sm block w-full rounded-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#ff315d] sm:text-sm sm:leading-6" placeholder="Data di inizio" required />
+            </div>
+            <div class="flex flex-col">
+                <label for="start_date">Fine *</label>
+                <input type="date" name="end_date" class="shadow-sm block w-full rounded-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#ff315d] sm:text-sm sm:leading-6" placeholder="Data di fine" required />
+            </div>
+        </div>
+        <h4 class="text-lg font-semibold">Prezzo</h4>
+        <div class="flex flex-row items-center gap-2">
+            <input type="checkbox" name="is_fixed_price"  class="rounded-md border-0 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#ff315d] sm:text-sm sm:leading-6">
+            <label for="">Prezzo fisso a notte</label>
+        </div>
+        <div class="flex flex-row gap-5 items-end">
+            <div class="flex flex-col">
+                <label for="">Prezzo fisso per notte</label>
+                <span class="font-thin">(solo se il campo prima è stato selezionato)</span>
+                <div class="relative mt-2 rounded-md shadow-sm lg:max-w-[12rem]">
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <span class="text-gray-500 sm:text-sm">€</span>
+                    </div>
+                    <input type="text" name="price_per_night" value="0" id="price" class="block w-full rounded-md border-0 py-2 pl-7 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#ff315d] sm:text-sm sm:leading-6" placeholder="0">
+                </div>
+            </div>
+            <div class="flex flex-col">
+                <label for="">Prezzo a persona per notte</label>
+                <div class="relative mt-2 rounded-md shadow-sm lg:max-w-[12rem]">
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <span class="text-gray-500 sm:text-sm">€</span>
+                    </div>
+                    <input type="text" name="price_per_night_per_person" value="0" id="price" class="block w-full rounded-md border-0 py-2 pl-7 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#ff315d] sm:text-sm sm:leading-6" placeholder="0">
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="p-2 px-10 bg-black text-white rounded-md w-fit">Aggiungi</button>
+    </form>
+    <h2 class="text-xl font-semibold">Lista Disponibilità</h2>
+    <div class="flex flex-row gap-5 items-center p-4 w-full text-center border-b-2 border-gray-100">
+        <span class="flex-1">Inizio</span>
+        <span class="flex-1">Fine</span>
+        <span class="flex-1">Prezzo fisso</span>
+        <span class="flex-1">Prezzo per notte</span>
+        <span class="flex-1">Prezzo per persona</span>
+        <span class="flex-1">Azioni</span>
+    </div>
+    {% for availability in availabilities %}
+        <div class="flex flex-row gap-5 items-center shadow-lg p-4 w-full rounded-md text-center">
+            <span class="flex-1 text-sm">{{ availability.start_date }}</span>
+            <span class="flex-1 text-sm">{{ availability.end_date }}</span>
+            <span class="flex-1 text-sm">{{ availability.is_fixed_price }}</span>
+            <span class="flex-1 text-sm">{{ availability.price_per_night }} €</span>
+            <span class="flex-1 text-sm">{{ availability.price_per_night_per_person }} €</span>
+            <a href="" class="text-red-400 flex-1">Elimina</a>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

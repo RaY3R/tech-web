@@ -11,13 +11,14 @@ class InsertionSerializer(serializers.ModelSerializer):
         return obj.total_price
 
     def get_fixed_price(self, obj):
-        return obj.availability_set.first().is_fixed_price
+        return obj.current_query_availability.is_fixed_price
 
     def get_price_per_night(self, obj):
-        if obj.availability_set.first().is_fixed_price:
-            return obj.availability_set.first().price_per_night
+        entity = obj.current_query_availability
+        if entity.is_fixed_price:
+            return entity.price_per_night
         else:
-            return obj.availability_set.first().price_per_night_per_person
+            return entity.price_per_night_per_person
     
     class Meta:
         model = Insertion

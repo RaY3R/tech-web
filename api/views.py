@@ -1,9 +1,10 @@
 import datetime
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework import permissions
 from api.serializers import InsertionSerializer
-from insertion.models import Insertion, Reservation
+from insertion.models import Availability, Insertion, Reservation
 from geopy import distance, Nominatim
 from shapely.geometry import Point, box
 
@@ -25,6 +26,10 @@ def check_availability(insertion, start_date, end_date):
 
 def parse_date(date):
     return datetime.datetime.strptime(date, '%Y-%m-%d')
+
+def get_total_price(availability, checkin, checkout, guests):
+    return availability.price_per_night*(checkout - checkin).days if availability.is_fixed_price is True else availability.price_per_night_per_person*(checkout-checkin).days*guests
+
 
 class InsertionViewSet(viewsets.ModelViewSet):
     queryset = Insertion.objects.all()
@@ -63,7 +68,9 @@ class InsertionViewSet(viewsets.ModelViewSet):
                     temp_queryset.append(insertion)
         
         for x in temp_queryset:
-            x.total_price = x.availability_set.first().price_per_night*(checkout - checkin).days if x.availability_set.first().is_fixed_price is True else x.availability_set.first().price_per_night_per_person*(checkout-checkin).days*guests
+            availability_entity = Availability.objects.filter(insertion=x, start_date__lte=checkin, end_date__gte=checkout).first()
+            x.current_query_availability = availability_entity
+            x.total_price = availability_entity.price_per_night*(checkout - checkin).days if availability_entity.is_fixed_price is True else availability_entity.price_per_night_per_person*(checkout-checkin).days*guests
 
         serializer = InsertionSerializer(temp_queryset, many=True)
         return JsonResponse({ "data": serializer.data }, safe=False)
@@ -76,10 +83,10 @@ class LocationAutocompleteViewSet(viewsets.ViewSet):
         if query_params.get('q') is None:
             return JsonResponse({'error': 'Missing required params'}, status=400)
         q = query_params.get('q')
-        queryset_cities = Insertion.objects.filter(_metadata__city__icontains=q)
-        queryset_countries = Insertion.objects.filter(_metadata__country__icontains=q)
-        cities = list(set([insertion._metadata['city'] for insertion in queryset_cities]))
-        countries = list(set([insertion._metadata['country'] for insertion in queryset_countries]))
+        queryset_cities = Insertion.objects.filter(metadata__city__icontains=q)
+        queryset_countries = Insertion.objects.filter(metadata__country__icontains=q)
+        cities = list(set([insertion.metadata['city'] for insertion in queryset_cities]))
+        countries = list(set([insertion.metadata['country'] for insertion in queryset_countries]))
         return JsonResponse(cities + countries, safe=False)
 
 class AccountEditPicViewSet(viewsets.ViewSet):
@@ -102,3 +109,45 @@ class AccountEditPicViewSet(viewsets.ViewSet):
         request.user.pic = request.FILES['picture']
         request.user.save()
         return JsonResponse({'message': 'Profile picture updated successfully'}, status=200)
+
+class ReservationViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def list(self, request):
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    def post(self, request): 
+        query_params = request.POST.copy()
+
+        insertion_uuid = query_params.get('insertion_id')
+        start_date = query_params.get('checkin')
+        end_date = query_params.get('checkout')
+        guests = query_params.get('guests')
+        availability_id = query_params.get('availability_id')
+
+        availability = get_object_or_404(Availability, pk=availability_id)
+
+        if insertion_uuid is None or start_date is None or end_date is None or guests is None or availability_id is None:
+            return JsonResponse({'error': 'Missing required params'}, status=400)
+        
+        insertion = get_object_or_404(Insertion, uuid=insertion_uuid)
+        if insertion.host == request.user:
+            return JsonResponse({'error': 'You cannot book your own insertion'}, status=400)
+        
+        try:
+            start_date = parse_date(start_date)
+            end_date = parse_date(end_date)
+            guests = int(guests)
+        except ValueError:
+            return JsonResponse({'error': 'Invalid date format'}, status=400)
+        
+        if guests > insertion.max_guests:
+            return JsonResponse({'error': 'Too many guests'}, status=400)
+        
+        if check_availability(insertion, start_date, end_date) is False:
+            return JsonResponse({'error': 'Insertion not available'}, status=400)
+        
+        reservation = Reservation(insertion=insertion, start_date=start_date, end_date=end_date, total_price=get_total_price(availability, start_date, end_date, guests), guests=guests, user=request.user)
+        reservation.is_paid = True
+        reservation.save()
+        return JsonResponse({'message': 'Reservation created successfully'}, status=200)

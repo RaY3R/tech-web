@@ -1,13 +1,32 @@
 from django import forms
 
-from insertion.models import Insertion
+from insertion.models import Availability, Insertion
+from user.models import CustomUser
 
-input_class_full = 'block rounded-md border-gray-200 w-full'
-input_class_half = 'block rounded-md border-gray-200 w-1/2'
+input_class_full = 'shadow-sm block w-full rounded-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#ff315d] sm:text-sm sm:leading-6'
 
 class InsertionForm(forms.ModelForm):
     
     class Meta:
         model = Insertion
-        fields = ['title', 'description', 'rules', 'services', 'single_beds', 'king_beds', 'bedrooms', 'bathrooms', 'cover_image', 'latitude', 'longitude', 'address', 'max_guests']
+        fields = ['cover_image', 'title', 'description', 'rules', 'services', 'single_beds', 'king_beds', 'bedrooms', 'bathrooms', 'latitude', 'longitude', 'max_guests']
         pass
+
+class AvailabilityForm(forms.ModelForm):
+    
+    class Meta:
+        model = Availability
+        fields = ['start_date', 'end_date', 'is_fixed_price', 'price_per_night', 'price_per_night_per_person']
+
+class EditHostPaymentForm(forms.ModelForm):
+
+    iban = forms.CharField(max_length=27, widget=forms.TextInput(attrs={'class': input_class_full, 'placeholder': 'IT0000000000000000000000'}), label='IBAN *')
+    tax_code = forms.CharField(max_length=16, widget=forms.TextInput(attrs={'class': input_class_full, 'placeholder': 'IT00000000000'}), label='Codice fiscale *')
+
+    class Meta:
+        model = CustomUser
+        fields = ['iban', 'tax_code']
+        fields_widget = {
+            'iban': forms.TextInput(attrs={'class': input_class_full}),
+            'tax_code': forms.TextInput(attrs={'class': input_class_full})
+        }

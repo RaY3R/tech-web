@@ -8,5 +8,6 @@ router = routers.DefaultRouter()
 router.register(r'search', InsertionViewSet, basename='search')
 router.register(r'account/picture', AccountEditPicViewSet, basename='account-edit-picture')
 router.register(r'location/autocomplete', LocationAutocompleteViewSet, basename='location-autocomplete')
+router.register(r'reserve', ReservationViewSet, basename='reserve')
 
 urlpatterns = router.urls

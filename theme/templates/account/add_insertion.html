@@ -14,15 +14,17 @@
             {{ message }}
         {% endfor %}
     {% endif %}
-    <form action="" method="POST" class="flex flex-col w-full gap-5">
+    <form action="" method="POST" class="flex flex-col w-full gap-5" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="container">
             <h1 class="text-xl font-bold">Informazioni generali</h1>
             <div class="flex flex-col gap-4 mt-4">
+                <label for="file">Immagine di copertina *</label>
+                {{ form.cover_image }}
                 <label for="" class="">Titolo annuncio *</label>
-                <input type="text" name="title" placeholder="Stupenda villa con piscina a Roma con giardino privato" class="p-2 border-2 border-gray-200 rounded-md" />
+                <input type="text" name="title" placeholder="Stupenda villa con piscina a Roma con giardino privato" class="shadow-sm block w-full rounded-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#ff315d] sm:text-sm sm:leading-6" required />
                 <label for="description">Descrizione *</label>
-                <textarea name="description" placeholder="Stupenda villa situata nei pressi di..." class="p-2 border-2 border-gray-200 rounded-md" value="{{ form.description.value }}"></textarea>
+                <textarea name="description" placeholder="Stupenda villa situata nei pressi di..." class="shadow-sm block w-full rounded-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#ff315d] sm:text-sm sm:leading-6" value="{{ form.description.value }}"></textarea>
             </div>
         </div>
         <div class="container">
@@ -30,11 +32,11 @@
             <div class="flex flex-row mt-4 gap-10">
                 <div class="flex flex-col">
                     <label for="max_guests">Max ospiti *</label>
-                    <input type="number" name="max_guests" min="1" max="30" value="4" class="p-2 border-2 border-gray-200 rounded-md lg:w-[13rem]" />
+                    <input type="number" name="max_guests" min="1" max="30" value="4" class="shadow-sm block w-full rounded-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#ff315d] sm:text-sm sm:leading-6 lg:w-[13rem]" />
                 </div>
                 <div class="flex flex-col">
                     <label for="">Tipo di alloggio *</label>
-                    <select name="" id="" class="p-2 border-2 border-gray-200 rounded-md lg:w-[13rem]">
+                    <select name="" id="" class="shadow-sm block w-full rounded-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#ff315d] sm:text-sm sm:leading-6 lg:w-[13rem]">
                         <option value="" selected disabled>Seleziona la tipologia</option>
                         <option value="APARTMENT">Appartamento intero</option>
                         <option value="VILLA">Villa intera</option>
@@ -44,14 +46,25 @@
             </div>
             <div class="flex flex-col mt-4" >
                 <label for="">Regole dell'alloggio *</label>
-                <textarea name="rules" id="" class="p-2 border-2 border-gray-200 rounded-md" placeholder="1. Vietato portare animali..."></textarea>
+                <textarea name="rules" id="" class="shadow-sm block w-full rounded-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#ff315d] sm:text-sm sm:leading-6" placeholder="1. Vietato portare animali..."></textarea>
             </div>
         </div>
         <div class="container">
             <h1 class="text-xl font-bold">Posizione</h1>
-            <div class="input-group flex flex-col mt-3">
-                <label for="address">Indirizzo completo *</label>
-                <input name="address" type="text" class="p-2 border-2 border-gray-200 rounded-md lg:w-[23rem]" placeholder="Viale Risorgimento 30/A, Roma...">
+            <div class="input-group flex flex-row flex-wrap mt-3 gap-2">
+                <div class="flex flex-col max-lg:w-full">
+                    <label for="address">Via *</label>
+                    <input name="address" type="text" class="shadow-sm block w-full rounded-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#ff315d] sm:text-sm sm:leading-6 lg:w-[23rem]" placeholder="Viale Risorgimento 30/A">
+                </div>
+                <div class="flex flex-col max-lg:w-full">
+                    <label for="city">Città *</label>
+                    <input name="city" type="text" class="shadow-sm block w-full rounded-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#ff315d] sm:text-sm sm:leading-6 lg:w-[13rem]" placeholder="Roma">
+                    
+                </div>
+                <div class="flex flex-col max-lg:w-full">
+                    <label for="country">Paese *</label>
+                    <input name="country" type="text" class="shadow-sm block w-full rounded-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#ff315d] sm:text-sm sm:leading-6 lg:w-[13rem]" placeholder="Italia">
+                </div>
             </div>
             <div class="map__container mt-4">
                 <span>Seleziona la posizione dell'immobile sulla mappa</span>
@@ -67,21 +80,21 @@
                 <div class="flex gap-10 max-lg:w-full">
                     <div class="flex flex-col w-full">
                         <label for="baths">Numero bagni *</label>
-                        <input type="number" name="bathrooms" value="1" min="1" max="30" class="p-2 border-2 border-gray-200 rounded-md lg:w-[13rem]" />
+                        <input type="number" name="bathrooms" value="1" min="1" max="30" class="shadow-sm block w-full rounded-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#ff315d] sm:text-sm sm:leading-6 lg:w-[13rem]" />
                     </div>
                     <div class="flex flex-col w-full">
                         <label for="baths">Numero camere da letto *</label>
-                        <input type="number" name="bedrooms" value="1" min="1" max="30" class="p-2 border-2 border-gray-200 rounded-md lg:w-[13rem]" />
+                        <input type="number" name="bedrooms" value="1" min="1" max="30" class="shadow-sm block w-full rounded-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#ff315d] sm:text-sm sm:leading-6 lg:w-[13rem]" />
                     </div>
                 </div>
                 <div class="flex gap-10 max-lg:w-full">
                     <div class="flex flex-col w-full">
                         <label for="baths">Letti singoli *</label>
-                        <input type="number" name="single_beds" value="1" min="0" max="30" class="p-2 border-2 border-gray-200 rounded-md lg:w-[13rem]" />
+                        <input type="number" name="single_beds" value="1" min="0" max="30" class="shadow-sm block w-full rounded-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#ff315d] sm:text-sm sm:leading-6 lg:w-[13rem]" />
                     </div>
                     <div class="flex flex-col w-full">
                         <label for="baths">Letti matrimoniali *</label>
-                        <input type="number" name="king_beds" value="1" min="0" max="30" class="p-2 border-2 border-gray-200 rounded-md lg:w-[13rem]" />
+                        <input type="number" name="king_beds" value="1" min="0" max="30" class="shadow-sm block w-full rounded-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#ff315d] sm:text-sm sm:leading-6 lg:w-[13rem]" />
                     </div>
                 </div>
             </div>

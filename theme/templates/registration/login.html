@@ -6,7 +6,7 @@
         <h2 class="text-2xl font-bold text-center">Accedi</h2>
         {% if messages %}
             {% for message in messages %}
-                <div class="bg-red-500 text-white p-2 rounded-md text-center mt-3">{{ message }}</div>
+                <div class="error__message">{{ message }}</div>
             {% endfor %}
         {% endif %}
         <form action="" method="POST" class="login__form flex flex-col gap-4 mt-4 w-full"> 
