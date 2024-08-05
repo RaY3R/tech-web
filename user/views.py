@@ -1,4 +1,5 @@
 from cProfile import label
+from datetime import datetime
 from django import forms
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
@@ -9,8 +10,9 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.contrib import messages
 
+from insertion import services
 from insertion.forms import AvailabilityForm, EditHostPaymentForm, InsertionForm
-from insertion.models import Insertion
+from insertion.models import Insertion, Reservation
 from user.decorators import only_host
 from user.forms import CreateUserForm
 
@@ -82,7 +84,7 @@ def add_room_view(request):
     else:
         form = InsertionForm()
         
-    return render(request, 'account/add_insertion.html', { 'form': form, 'services': Insertion.get_services() })
+    return render(request, 'account/add_insertion.html', { 'form': form, 'services': services.services })
 
 @login_required(login_url='/login')
 @only_host
@@ -165,3 +167,10 @@ def payment_settings_view(request):
 @login_required(login_url='/login')
 def bookings_view(request):
     return render(request, 'account/my_bookings.html', { 'bookings': request.user.reservation_set.all() })
+
+@login_required(login_url='/login')
+@only_host
+def reservations_view(request):
+    reservations = Reservation.objects.filter(insertion__host=request.user)
+
+    return render(request, 'account/host_reservations.html', { 'reservations': reservations })

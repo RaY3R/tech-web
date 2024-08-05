@@ -1,0 +1,87 @@
+{% extends 'layouts/base.html' %} 
+{% block title %}{{ insertion.title }} - Lascia una recensione {% endblock %} 
+{% block tags %}
+{% endblock %} 
+{% block content %} 
+<div class="container w-full flex justify-center m-auto py-10">
+    <div class="flex flex-col gap-5 px-8 lg:px-[12rem] max-lg:w-full" >
+        <h1 class="text-3xl font-bold text-left">Lascia una recensione</h1>
+        <form id="review_form" action="" class="flex flex-wrap gap-10 w-full" >
+            <div class="flex gap-4 items-center flex-1">
+                <ion-icon name="star" class="text-3xl text-[#ff315d]"></ion-icon>
+                <input name="rating" type="number" class="w-full border-2 border-gray-300 rounded-lg p-5" placeholder="Da 1 a 5" min="1" max="5" />
+            </div>
+            <textarea name="review" rows="4" class="w-full border-2 border-gray-300 rounded-lg p-5" placeholder="Scrivi la tua recensione..."></textarea>
+            <button type="submit" class="bg-[#ff315d] text-white p-2 rounded-lg w-full hover:bg-[#be2344] transition-all">Invia recensione</button>
+        </form>
+        <h1 class="text-3xl font-bold text-left">{{ insertion.title }}</h1>
+        <div class="insertion__images">
+            <img src="{{ insertion.cover_image.url }}" alt="Card image" class="rounded-xl w-full h-80 object-cover" />
+        </div>
+        <div class="flex flex-wrap gap-10 w-full">
+            <div class="flex flex-col flex-grow gap-5 shadow-lg p-10 rounded-lg max-lg:w-full">
+                <div class="flex flex-row gap-2 items-center">
+                    <ion-icon name="location-outline" class="text-2xl"></ion-icon>
+                    <h1 class="text-2xl font-semibold">{{ insertion.metadata.city }}, {{ insertion.metadata.country }}</h1>
+                </div>
+                <div class="flex gap-5">
+                    <div class="flex items-center gap-2">
+                        <ion-icon name="man-outline" class="text-lg"></ion-icon>
+                        <p class="text-lg">{{ insertion.max_guests }} ospiti</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <ion-icon name="bed-outline" class="text-lg"></ion-icon>
+                        <p class="text-lg">{{ insertion.bedrooms }} camere</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <ion-icon name="water-outline" class="text-lg"></ion-icon>
+                        <p class="text-lg">{{ insertion.bathrooms }} bagni</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <ion-icon name="bed-outline" class="text-lg"></ion-icon>
+                    <p class="text-lg">{{ insertion.king_beds }} lett{% if insertion.king_beds == 1 %}o{% else %}i{% endif %} matrimonial{% if insertion.king_beds == 1 %}e{% else %}i{% endif %}</p>
+                    <p class="text-lg">{{ insertion.single_beds }} lett{% if insertion.single_beds == 1 %}o{% else %}i{% endif %} singol{% if insertion.single_beds == 1 %}o{% else %}i{% endif %}</p>
+                </div>
+            </div>
+            <div class="flex gap-10 justify-between max-lg:w-full">
+                <div class="flex flex-col gap-5 shadow-lg p-10 rounded-lg w-full">
+                    <h1 class="text-2xl font-semibold">Host</h1>
+                    <div class="flex items-center gap-3">
+                        <img src="{{ insertion.host.pic.url }}" alt="Host image" class="rounded-full w-20 h-20 object-cover" />
+                    <p class="text-lg">{{ insertion.host.first_name }} {{ insertion.host.last_name }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript" defer="defer">
+    $('#review_form').submit(function(e) {
+        e.preventDefault();
+        const rating = $(this).find('input[name="rating"]').val();
+        const review = $(this).find('textarea[name="review"]').val();
+        $.ajax({
+            type: 'POST',
+            url: '/api/review/',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                rating: rating,
+                review: review,
+                insertionId: '{{ insertion.uuid }}',
+                reservationId: '{{ reservation_id }}'
+            },
+            success: function(response) {
+                location.reload();
+            },
+            error: function(response) {
+                const errorList = document.querySelector('.errorlist');
+                errorList.innerHTML = '';
+                errorList.innerHTML += `<p class="error__message">${response.responseJSON.error}</p>`;
+            }
+        });
+    });
+</script>
+{% endblock %}

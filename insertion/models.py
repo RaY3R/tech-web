@@ -68,3 +68,16 @@ class Reservation(models.Model):
     
     class Meta:
         verbose_name_plural = 'Reservations'
+
+class Review(models.Model):
+    insertion = models.ForeignKey(Insertion, on_delete=models.CASCADE, null=False)
+    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE, null=False)
+    rating = models.IntegerField(null=False)
+    review = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f'{self.insertion.title} - {self.rating}'
+    
+    class Meta:
+        verbose_name_plural = 'Reviews'

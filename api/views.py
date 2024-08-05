@@ -4,9 +4,11 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework import permissions
 from api.serializers import InsertionSerializer
-from insertion.models import Availability, Insertion, Reservation
+from insertion.models import Availability, Insertion, Reservation, Review
 from geopy import distance, Nominatim
 from shapely.geometry import Point, box
+
+from user.decorators import only_host
 
 # Create your views here.
 
@@ -35,7 +37,7 @@ class InsertionViewSet(viewsets.ModelViewSet):
     queryset = Insertion.objects.all()
     serializer_class = InsertionSerializer
     permission_classes = [permissions.AllowAny]
-    
+
     def list(self, request):
         query_params = request.query_params.copy()
         if query_params.get('checkin') is None \
@@ -72,6 +74,24 @@ class InsertionViewSet(viewsets.ModelViewSet):
             x.current_query_availability = availability_entity
             x.total_price = availability_entity.price_per_night*(checkout - checkin).days if availability_entity.is_fixed_price is True else availability_entity.price_per_night_per_person*(checkout-checkin).days*guests
 
+        serializer = InsertionSerializer(temp_queryset, many=True)
+        return JsonResponse({ "data": serializer.data }, safe=False)
+    
+class FeaturedInsertionViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.AllowAny]
+    
+    def list(self, request):
+        queryset = Insertion.objects.all()
+        temp_queryset = []
+        for insertion in queryset:
+            if type(get_location_coordinates(location)) == list:
+                boundaries = tuple(get_location_coordinates(location))
+                bounding_box = box(*boundaries, ccw=True)
+                if bounding_box.contains(Point(insertion.longitude, insertion.latitude)):
+                    temp_queryset.append(insertion)
+            else:
+                if distance.distance(get_location_coordinates(location), (insertion.latitude, insertion.longitude)).km < 50:
+                    temp_queryset.append(insertion)
         serializer = InsertionSerializer(temp_queryset, many=True)
         return JsonResponse({ "data": serializer.data }, safe=False)
     
@@ -151,3 +171,110 @@ class ReservationViewSet(viewsets.ViewSet):
         reservation.is_paid = True
         reservation.save()
         return JsonResponse({'message': 'Reservation created successfully'}, status=200)
+    
+class ReservationDeleteViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def list(self, request):
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    def post(self, request):
+        
+        if request.user.role != 'HOST':
+            return JsonResponse({'error': 'Unauthorized'}, status=401)
+        
+        query_params = request.POST.copy()
+        
+        reservation_id = query_params.get('reservationId')
+        if reservation_id is None:
+            return JsonResponse({'error': 'Missing required params'}, status=400)
+        
+        try:
+            reservation = get_object_or_404(Reservation, pk=reservation_id)
+        except:
+            return JsonResponse({'error': 'Reservation not found'}, status=404)
+        
+        if reservation.insertion.host != request.user:
+            return JsonResponse({'error': 'Unauthorized'}, status=401)
+        
+        if reservation.end_date < datetime.datetime.now().date():
+            return JsonResponse({'error': 'Reservation already ended'}, status=400)
+
+        reservation.delete()
+        return JsonResponse({'message': 'Reservation deleted successfully'}, status=200)
+
+class BookingDeleteViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def list(self, request):
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    def post(self, request):
+        query_params = request.POST.copy()
+        
+        reservation_id = query_params.get('reservationId')
+        if reservation_id is None:
+            return JsonResponse({'error': 'Missing required params'}, status=400)
+        try:
+            reservation = get_object_or_404(Reservation, pk=reservation_id)
+        except:
+            return JsonResponse({'error': 'Reservation not found'}, status=404)
+        
+        if reservation.user != request.user:
+            return JsonResponse({'error': 'Unauthorized'}, status=401)
+        
+        if reservation.end_date < datetime.datetime.now().date():
+            return JsonResponse({'error': 'Reservation already ended'}, status=400)
+        
+        if reservation.start_date < datetime.datetime.now().date() and reservation.end_date > datetime.datetime.now().date():
+            return JsonResponse({'error': 'Cannot delete reservation in progress'}, status=400)
+        
+        reservation.delete()
+        return JsonResponse({'message': 'Reservation deleted successfully'}, status=200)
+    
+class LeaveReviewViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def list(self, request):
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    def post(self, request):
+        query_params = request.POST.copy()
+        
+        insertion_uuid = query_params.get('insertionId')
+        reservation_id = query_params.get('reservationId')
+        rating = query_params.get('rating')
+        review = query_params.get('review')
+
+        if Review.objects.filter(insertion__uuid=insertion_uuid, reservation__pk=reservation_id).exists():
+            return JsonResponse({'error': 'Review already exists'}, status=400)
+        
+        if insertion_uuid is None or reservation_id is None or rating is None or review is None:
+            return JsonResponse({'error': 'Missing required params'}, status=400)
+        
+        try:
+            rating = int(rating)
+        except ValueError:
+            return JsonResponse({'error': 'Invalid rating'}, status=400)
+        
+        if rating < 1 or rating > 5:
+            return JsonResponse({'error': 'Invalid rating'}, status=400)
+        
+        try:
+            insertion = get_object_or_404(Insertion, uuid=insertion_uuid)
+            reservation = get_object_or_404(Reservation, pk=reservation_id)
+        except:
+            return JsonResponse({'error': 'Insertion or reservation not found'}, status=404)
+        
+        if reservation.user != request.user:
+            return JsonResponse({'error': 'Unauthorized'}, status=401)
+        
+        if reservation.insertion != insertion:
+            return JsonResponse({'error': 'Reservation not found'}, status=404)
+        
+        if reservation.end_date > datetime.datetime.now().date():
+            return JsonResponse({'error': 'Reservation not ended yet'}, status=400)
+        
+        review = Review(insertion=insertion, reservation=reservation, rating=rating, review=review)
+        review.save()
+        return JsonResponse({'message': 'Review created successfully'}, status=200)

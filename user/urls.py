@@ -16,5 +16,6 @@ urlpatterns = [
     path(r'account/insertions', views.my_insertions_view, name='myinsertions'),
     path(r'account/insertion/<str:uuid>', views.edit_insertion_view, name='editinsertion'),
     path(r'account/editpayment', views.payment_settings_view, name='paymentsettings'),
+    path(r'account/reservations', views.reservations_view, name='reservations'),
 ]
 

@@ -7,6 +7,21 @@
   <div class="container w-full flex justify-center m-auto">
     <div class="flex flex-col gap-5 px-8 lg:px-[12rem] max-lg:w-full" >
         <h1 class="text-3xl font-bold text-left">{{ insertion.title }}</h1>
+        <div class="flex gap-2">
+            {{ insertion.rating }}
+            {% with ''|center:insertion.rating as range %}
+                {% for _ in range %}
+                    <ion-icon name="star" class="text-lg text-[#ff315d]"></ion-icon>
+                {% endfor %}
+            {% endwith %}
+        </div>
+        {% if messages %}
+            <div class="errorlist">
+                {% for message in messages %}
+                    <p class="error__message">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
         <div class="insertion__images">
             <img src="{{ insertion.cover_image.url }}" alt="Card image" class="rounded-xl w-full h-80 object-cover" />
         </div>

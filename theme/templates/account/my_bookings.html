@@ -9,6 +9,13 @@
 {% block content1 %} 
 <div class="w-full flex flex-col gap-5 items-start">
     <h1 class="text-3xl font-bold">Le tue prenotazioni</h1>
+    <div class="errorlist">
+        {% if messages %}
+            {% for message in messages %}
+                <p class="error__message">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    </div>
     <div class="flex flex-row flex-wrap max-lg:m-auto gap-10">
         {% for booking in bookings %}
             <a href="">
@@ -24,9 +31,35 @@
                     <p>Prenotato il {{ booking.created_at|date:'d/m/Y' }}</p>
                     <p>Date: {{ booking.start_date|date:'d/m/Y' }} - {{ booking.end_date|date:'d/m/Y' }}</p>
                     <p>Persone: {{ booking.guests }} </p>
+                    <div class="flex flex-col gap-2 mt-3">
+                        <button onclick="deleteBooking({{ booking.id }})" class="card__button bg-[#ff315d] text-white p-2 rounded-lg w-full hover:bg-[#be2344] transition-all">Cancella prenotazione</button>
+                        <a href="{% url 'insertion:leave-review' uuid=booking.insertion.uuid reservation_id=booking.id %}" class="card__button text-center bg-black text-white p-2 rounded-lg w-full hover:bg-[#4d4d4d] transition-all">Lascia una recensione</a>
+                    </div>
                     </div>
                 </div>
             </a>
         {% endfor %}
     </div>
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript" defer="defer">
+    const deleteBooking = function(id) {
+        $.ajax({
+            type: 'POST',
+            url: '/api/account/booking/delete/',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                reservationId: id,
+            },
+            success: function(response) {
+                location.reload();
+            },
+            error: function(response) {
+                const errorList = document.querySelector('.errorlist');
+                errorList.innerHTML = '';
+                errorList.innerHTML += `<p class="error__message">${response.responseJSON.error}</p>`;
+            }
+        });
+    }
+</script>
 {% endblock %}

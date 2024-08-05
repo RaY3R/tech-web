@@ -1,3 +1,10 @@
+moment.locale("it");
+var current = moment();
+var selectedCheckInDate = null;
+var selectedCheckOutDate = null;
+var months = [];
+var currentIndex = current.month();
+
 const isExtraDays = (week, date) => {
   if (week === 0 && date > 10) {
     return true;
@@ -10,16 +17,42 @@ const isExtraDays = (week, date) => {
   }
 };
 
+const highlightSelectedDates = () => {
+  start = moment(selectedCheckInDate);
+  end = moment(selectedCheckOutDate);
+  $('td[date="' + start.toISOString() + '"] span').addClass("selected");
+  $('td[date="' + end.toISOString()+ '"] span').addClass("selected");
+  $(`td[date="${start.toISOString()}"] span`)
+    .parent()
+    .addClass("selected-gray");
+  while (start.isBefore(end)) {
+    start.add(1, "day");
+    months.forEach((month) => {
+      month.calendar.forEach((week) => {
+        week.forEach((day) => {
+          if (day.date == start.toISOString()) {
+            $(`td[date="${day.date}"] span`)
+              .parent()
+              .addClass("selected-gray");
+          }
+        });
+      });
+    });
+  }
+};
+
 if (new URLSearchParams(window.location.search).get("checkin")) {
   $("#checkin_date").text(
     new URLSearchParams(window.location.search).get("checkin")
   );
+  selectedCheckInDate = new URLSearchParams(window.location.search).get("checkin") + "T22:00:00.000Z"
 }
 
 if (new URLSearchParams(window.location.search).get("checkout")) {
   $("#checkout_date").text(
     new URLSearchParams(window.location.search).get("checkout")
   );
+  selectedCheckOutDate = new URLSearchParams(window.location.search).get("checkout") + "T22:00:00.000Z"
 }
 
 if (new URLSearchParams(window.location.search).get("guests")) {
@@ -59,11 +92,11 @@ const render = (months, currentIndex) => {
         .join("")}</tr>`;
     })
   );
+  highlightSelectedDates();
   $(".calendar_days td").click((e) => {
     if (!e.target.classList.contains("selected")) {
       if (selectedCheckInDate == null) {
         e.target.classList.add("selected");
-
         selectedCheckInDate = e.target.parentElement.getAttribute("date");
         $("#checkin_date").text(
           moment(selectedCheckInDate).subtract(1, "day").format("YYYY-MM-DD")
@@ -76,28 +109,11 @@ const render = (months, currentIndex) => {
         );
       }
       if (selectedCheckInDate && selectedCheckOutDate) {
-        start = moment(selectedCheckInDate);
-        end = moment(selectedCheckOutDate);
-        $(`td[date="${start.toISOString()}"] span`)
-          .parent()
-          .addClass("selected-gray");
-        while (start.isBefore(end)) {
-          start.add(1, "day");
-          months.forEach((month) => {
-            month.calendar.forEach((week) => {
-              week.forEach((day) => {
-                if (day.date == start.toISOString()) {
-                  $(`td[date="${day.date}"] span`)
-                    .parent()
-                    .addClass("selected-gray");
-                }
-              });
-            });
-          });
-        }
+        highlightSelectedDates();
       }
     } else {
       e.target.classList.remove("selected");
+      console.log(selectedCheckInDate, selectedCheckOutDate);
       if (selectedCheckInDate == e.target.parentElement.getAttribute("date")) {
         reset(true, true);
       }
@@ -108,11 +124,7 @@ const render = (months, currentIndex) => {
   });
 };
 
-moment.locale("it");
-var current = moment();
-var selectedCheckInDate = null;
-var selectedCheckOutDate = null;
-var months = [];
+
 
 for (var i = 0; i < 12; i++) {
   if (i < current.month()) {
@@ -150,9 +162,7 @@ for (var i = 0; i < 12; i++) {
   }
 }
 
-var currentIndex = current.month();
 
-render(months, currentIndex);
 
 $("#search__end_date").click(() => {
   if (!$("#people__popup").hasClass("hidden")) {
@@ -189,6 +199,7 @@ $("#calendar__next").click(() => {
 });
 
 const reset = (checkin, checkout) => {
+  console.log(checkin, checkout);
   if (checkin) {
     selectedCheckInDate = null;
     $("#checkin_date").text("Seleziona una data");
@@ -248,6 +259,8 @@ const triggerAutocomplete = () => {
   });
 };
 
+render(months, currentIndex);
+
 $(document).on("click", ".autocomplete_item", (e) => {
   $("#autocomplete_location__popup").addClass("hidden");
   $("#destination__input").val(e.currentTarget.innerHTML);
@@ -257,6 +270,24 @@ $("#destination__input").on("input", triggerAutocomplete);
 $("#destination__input").on("click", triggerAutocomplete);
 
 $("#search__submit").on("click", () => {
+  console.info(selectedCheckInDate, selectedCheckOutDate);
+  if(selectedCheckInDate == null ) {
+    $('#search__start_date').addClass('ring-1 ring-red-400');
+  }
+  if(selectedCheckOutDate == null) {
+    $('#search__end_date').addClass('ring-1 ring-red-400');
+  }
+  if($("#destination__input").val() == "") {
+    $('#search__place').addClass('ring-1 ring-red-400');
+  }
+  if($("#search_people_number").text() == 'Seleziona il numero') {
+    $('#search__people').addClass('ring-1 ring-red-400');
+  }
+
+  if(selectedCheckInDate == null || selectedCheckOutDate == null || $("#destination__input").val() == "" || $("#search_people_number").text() == "Seleziona il numero") {
+    return;
+  }
+
   document.location = `/results?location=${$(
     "#destination__input"
   ).val()}&checkin=${$("#checkin_date").text()}&checkout=${$(

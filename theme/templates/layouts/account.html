@@ -4,7 +4,7 @@
 {% block tags %}
 {% endblock %}
 {% block content %}
-<div class="w-full flex flex-col">
+<div class="w-full flex flex-col min-h-lvh">
     <div class="flex flex-row flex-wrap">
         <div class="min-w-[300px] shadow-2xl p-10 max-lg:flex-1 rounded-xl m-10 h-fit">
             <h4 class="text-lg font-bold p-4">Account</h4>
@@ -20,13 +20,13 @@
             <div class="border-b-2 rounded-md"></div>
             <div class="account__nav_items flex flex-col">
                 <a href="{% url 'user:myinsertions' %}" class="{% url_active 'user:myinsertions' %} p-4 flex items-center gap-2"><ion-icon name="home-outline" ></ion-icon> I tuoi immobili</a>
-                <a href="" class="p-4 flex items-center gap-2"><ion-icon name="home-outline" ></ion-icon> Le tue prenotazioni</a>
+                <a href="{% url 'user:reservations' %}" class="{% url_active 'user:reservations' %} p-4 flex items-center gap-2"><ion-icon name="home-outline" ></ion-icon> Gestisci prenotazioni</a>
                 <a href="{% url 'user:paymentsettings' %}" class="{% url_active 'user:paymentsettings' %} p-4 flex items-center gap-2"><ion-icon name="cash-outline" ></ion-icon> Pagamento</a>
                 <a href="{% url 'user:newinsertion' %}" class="{% url_active 'user:newinsertion' %} p-4 flex items-center gap-2"><ion-icon name="add-outline" ></ion-icon> Aggiungi un immobile</a>
             </div>
             {% endif %}
         </div>
-        <div class="p-8 flex-grow">
+        <div class="p-8 flex-grow ">
             {% block content1 %}
             {% endblock %}
         </div>
