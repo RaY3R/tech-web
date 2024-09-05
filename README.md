@@ -1,32 +1,61 @@
-# tech-web
-Progetto DJANGO tecnologie web
+# Django Project
 
-# Avviare un ambiente virtuale Python e un progetto Django
-## Creare un ambiente virtuale Python
-- Assicurarsi di avere Python installato
-- Aprire il terminale
-- Navigare alla directory del progetto
-- Creare l'ambiente virtuale
-  - `python -m venv nome_ambiente`
-- Attivare l'ambiente virtuale
-  - Windows: `.\nome_ambiente\Scripts\activate`
-  - Mac/Linux: `source nome_ambiente/bin/activate`
+Questo progetto è sviluppato utilizzando Django e integra diverse tecnologie per creare un'applicazione web moderna e funzionale.
 
-## Installare i pacchetti necessari
-- Assicurarsi che l'ambiente virtuale sia attivo
-- Installare i pacchetti con pip
-  - `pip install -r requirements.txt`
+## Tecnologie utilizzate
 
-## Creare un nuovo progetto Django
-- Utilizzare il comando Django-admin per creare un nuovo progetto
-  - `django-admin startproject nome_progetto`
+- **Django**: Framework web di alto livello per lo sviluppo di applicazioni web in Python.
+- **TailwindCSS**: Un framework CSS utility-first per creare velocemente interfacce personalizzate.
+- **jQuery**: Libreria JavaScript per manipolazioni del DOM e richieste AJAX.
+- **Crispy Forms**: Pacchetto per migliorare la resa delle form Django, utilizzando Bootstrap.
+- **Requests**: Libreria Python per effettuare richieste HTTP.
+- **BeautifulSoup4 (BS4)**: Libreria per il web scraping, utile per parsare HTML e XML.
+- **Django Rest Framework**: Strumento potente per costruire API RESTful con Django.
+- **Shapely**: Libreria per la manipolazione di oggetti geometrici (punti, poligoni, etc.).
+- **PyJWT**: Implementazione JSON Web Token in Python per l'autenticazione basata su token.
+- **Pillow**: Libreria Python per la manipolazione di immagini.
+- **Geopy**: Libreria per la geocodifica e la manipolazione di informazioni geografiche.
 
-## Avviare il server di sviluppo Django
-- Navigare nella directory del progetto
-  - `cd nome_progetto`
-- Avviare il server di sviluppo
-  - `python manage.py runserver`
+## Installazione e configurazione
 
-## Creare una nuova app Django (opzionale)
-- Utilizzare il comando manage.py per creare una nuova app
-  - `python manage.py startapp nome_app`
+### Prerequisiti
+
+Assicurati di avere installati i seguenti software:
+
+- **Python 3.x**: Linguaggio di programmazione utilizzato da Django.
+- **Node.js**: Necessario per gestire i pacchetti NPM (come TailwindCSS).
+- **PostgreSQL** o un altro database supportato da Django (opzionale, puoi usare SQLite per sviluppo).
+
+### Installazione del progetto
+
+1. Clona il repository del progetto:
+
+```bash
+git clone https://github.com/tuo-progetto.git
+cd tuo-progetto
+```
+
+2. Imposta l'ambiente virtuale e installa i requisiti:
+```bash
+python3 -m venv env
+source env/bin/activate  # Su Windows: env\Scripts\activate
+pip install -r requirements.txt
+npm install
+```
+
+3. Migrazione Database:
+```bash
+python manage.py migrate
+```
+
+4. Esecuzione:
+```bash
+python .\manage.py tailwind start
+python manage.py runserver
+```
+
+## Testing
+
+```bash
+python manage.py test
+```
