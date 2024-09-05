@@ -40,7 +40,7 @@ cd tuo-progetto
 python3 -m venv env
 source env/bin/activate  # Su Windows: env\Scripts\activate
 pip install -r requirements.txt
-npm install
+python .\manage.py tailwind install
 ```
 
 3. Migrazione Database:
