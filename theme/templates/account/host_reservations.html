@@ -21,6 +21,7 @@
                     <p>Check-out: {{ reservation.end_date }}</p>
                     <p>Numero di ospiti: {{ reservation.guests }}</p>
                     <p>Pagato: {% if reservation.is_paid %}Si{%else%}No{% endif %}</p>
+                    <p>Guest: {{ reservation.user }}</p>
                     <p class="font-semibold text-xl">Totale: {{ reservation.total_price }} €</p>
                 </div>
             </div>

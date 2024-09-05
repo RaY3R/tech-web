@@ -31,11 +31,18 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 messages.success(request, "You have been successfully logged in.")
+                if 'next' in request.GET:
+                    return HttpResponseRedirect(request.GET.get('next'))
                 return HttpResponseRedirect(reverse_lazy('user:profile'))
             else:
                 messages.error(request, 'Username o password non validi.')
 
     return render(request, 'registration/login.html', {'form': form })
+
+def validate_number(phone):
+    if phone[0] != '+' and phone[0] != '0':
+        return False
+    return True 
 
 def signup_view(request):
     if request.user.is_authenticated:
@@ -43,7 +50,7 @@ def signup_view(request):
     
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
-        if form.is_valid():
+        if form.is_valid() and validate_number(form.cleaned_data.get('phone')):
             form.save()
             login(request, form.instance)
             return HttpResponseRedirect(reverse_lazy('user:profile'))
@@ -72,11 +79,6 @@ def add_room_view(request):
         form = InsertionForm(request.POST, request.FILES)
         if form.is_valid():
             form.instance.host_id = request.user.id
-            form.instance.metadata = {
-                'address': form.cleaned_data.get('address'),
-                'city': form.cleaned_data.get('city'),
-                'country': form.cleaned_data.get('country')
-            }
             form.save()
             return HttpResponseRedirect(reverse_lazy('user:profile'))
         else:

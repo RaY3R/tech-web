@@ -7,6 +7,7 @@ from api.serializers import InsertionSerializer
 from insertion.models import Availability, Insertion, Reservation, Review
 from geopy import distance, Nominatim
 from shapely.geometry import Point, box
+from django.db.models import Avg
 
 from user.decorators import only_host
 
@@ -70,10 +71,23 @@ class InsertionViewSet(viewsets.ModelViewSet):
                     temp_queryset.append(insertion)
         
         for x in temp_queryset:
+            rating = Review.objects.filter(insertion=x).aggregate(Avg('rating'))['rating__avg']
+            if rating is not None:
+                x.rating = round(rating, 1)
+            else:
+                x.rating = 0
             availability_entity = Availability.objects.filter(insertion=x, start_date__lte=checkin, end_date__gte=checkout).first()
             x.current_query_availability = availability_entity
             x.total_price = availability_entity.price_per_night*(checkout - checkin).days if availability_entity.is_fixed_price is True else availability_entity.price_per_night_per_person*(checkout-checkin).days*guests
 
+        temp_queryset = sorted(temp_queryset, key=lambda x: x.rating, reverse=True)
+
+        if query_params.get('sortby') == 'price_asc':
+            temp_queryset = sorted(temp_queryset, key=lambda x: x.total_price)
+        elif query_params.get('sortby') == 'price_desc':
+            temp_queryset = sorted(temp_queryset, key=lambda x: x.total_price, reverse=True)
+
+        
         serializer = InsertionSerializer(temp_queryset, many=True)
         return JsonResponse({ "data": serializer.data }, safe=False)
     
@@ -82,17 +96,16 @@ class FeaturedInsertionViewSet(viewsets.ViewSet):
     
     def list(self, request):
         queryset = Insertion.objects.all()
-        temp_queryset = []
-        for insertion in queryset:
-            if type(get_location_coordinates(location)) == list:
-                boundaries = tuple(get_location_coordinates(location))
-                bounding_box = box(*boundaries, ccw=True)
-                if bounding_box.contains(Point(insertion.longitude, insertion.latitude)):
-                    temp_queryset.append(insertion)
+        for x in queryset:
+            rating = Review.objects.filter(insertion=x).aggregate(Avg('rating'))['rating__avg']
+            if rating is not None:
+                x.rating = round(rating, 1)
             else:
-                if distance.distance(get_location_coordinates(location), (insertion.latitude, insertion.longitude)).km < 50:
-                    temp_queryset.append(insertion)
-        serializer = InsertionSerializer(temp_queryset, many=True)
+                x.rating = 0
+            x.current_query_availability = None
+            
+        queryset = sorted(queryset, key=lambda x: x.rating, reverse=True)
+        serializer = InsertionSerializer(queryset, many=True)
         return JsonResponse({ "data": serializer.data }, safe=False)
     
 class LocationAutocompleteViewSet(viewsets.ViewSet):
@@ -107,7 +120,7 @@ class LocationAutocompleteViewSet(viewsets.ViewSet):
         queryset_countries = Insertion.objects.filter(metadata__country__icontains=q)
         cities = list(set([insertion.metadata['city'] for insertion in queryset_cities]))
         countries = list(set([insertion.metadata['country'] for insertion in queryset_countries]))
-        return JsonResponse(cities + countries, safe=False)
+        return JsonResponse((cities + countries)[slice(5)], safe=False)
 
 class AccountEditPicViewSet(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]

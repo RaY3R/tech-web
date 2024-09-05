@@ -3,9 +3,19 @@
 <div class="flex flex-row pt-10 w-full flex-wrap-reverse gap-10">
     <div class="flex-1 px-10">
         <h2 class="font-bold text-2xl">Risultati della ricerca</h2>
-        <div id="results__container" class="flex flex-wrap mt-4 gap-8 m-auto">
-            <div id="loading__spinner" class="flex flex-col items-center m-auto self-center justify-self-center">
-                <ion-icon name="square-outline" class="animate-spin text-4xl"></ion-icon>
+        <div class="filters__box flex w-full justify-end">
+            <div class="flex items-center gap-2">
+                <span>Ordina per</span>
+                <select>
+                    <option value="price_asc">Prezzo crescente</option>
+                    <option value="price_desc">Prezzo decrescente</option>
+                    <option value="rating" selected>Valutazione</option>
+                </select>
+            </div>
+        </div>
+        <div id="results__container" class="flex flex-wrap mt-4 gap-8 m-auto p-2">
+            <div id="loading__spinner" class="flex flex-col items-center m-auto self-center justify-center">
+                <ion-icon name="sunny-outline" class="animate-spin text-4xl"></ion-icon>
             </div>
         </div>
     </div>
@@ -28,25 +38,27 @@
     map.addControl(new mapboxgl.NavigationControl());
 </script>
 <script>
-    $(document).ready(function() {
-        let params = new URLSearchParams(window.location.search);
-        let markers = [];
+    let params = new URLSearchParams(window.location.search);
+    let markers = [];
+    function makeAjaxQuery(){
+        $('#loading__spinner').show();
         $.ajax('/api/search', {
             method: 'GET',
             data: {
                 location: params.get('location'),
                 checkin: params.get('checkin'),
                 checkout: params.get('checkout'),
-                guests: params.get('guests')
+                guests: params.get('guests'),
+                sortby: $('select').val()
             },
             success: function(data) {
-                $('#loading__spinner').remove();
+                $('#loading__spinner').hide();
                 data.data.forEach(result => {
                     $('#results__container').append(`
                     <div class="insertion__card">
                         <a href="insertion/${result.uuid}${document.location.search.toString()}" class="card__link">
                             <div class="absolute p-5">
-                                <span class="font-bold text-md bg-white rounded-md py-1 px-3">${result.price_per_night} € ${result.fixed_price ? '' : 'p.p'}</span>
+                                <span class="font-bold text-md bg-white rounded-md py-1 px-3">${result.total_price} € </span>
                             </div>
                             <img
                                 src="${result.cover_image}"
@@ -54,13 +66,18 @@
                                 class="card__image rounded-xl"
                             />
                             <div class="card__content mt-3">
+                                <div class="flex items-center gap-2">
+                                    <p class="text-lg font-semibold">${result.rating.toFixed(1)}</p>
+                                    <div class="flex gap-2 text-[#ff315d]">
+                                        ${'★'.repeat(result.rating)}
+                                    </div>
+                                </div>
                                 <h3 class="card__title font-bold">${result.title}</h3>
                                 <div class="flex items-center"> 
                                     <ion-icon name="pin"></ion-icon> 
                                     <p class="font-semibold"> ${result.metadata.city}</p> 
                                 </div>
                                 <p>Host: ${result.host}</p>
-                                <p>Totale: ${result.total_price} €</p>
                             </div>
                         </a>
                     </div>`);
@@ -79,6 +96,17 @@
                 });
             }
         });
+    }
+
+    $(document).ready(function() {
+        makeAjaxQuery();
     });
+
+    $('select').change(function() {
+        $('#results__container .insertion__card').remove();
+        markers.forEach(marker => marker.remove());
+        makeAjaxQuery();
+    });
+
 </script>
 {% endblock %}

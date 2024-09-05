@@ -9,8 +9,7 @@ class InsertionForm(forms.ModelForm):
     
     class Meta:
         model = Insertion
-        fields = ['cover_image', 'title', 'description', 'rules', 'services', 'single_beds', 'king_beds', 'bedrooms', 'bathrooms', 'latitude', 'longitude', 'max_guests']
-        pass
+        fields = ['cover_image', 'title', 'description', 'rules', 'services', 'single_beds', 'king_beds', 'metadata', 'bedrooms', 'bathrooms', 'latitude', 'longitude', 'max_guests']
 
 class AvailabilityForm(forms.ModelForm):
     

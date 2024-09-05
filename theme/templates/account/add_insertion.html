@@ -65,6 +65,7 @@
                     <label for="country">Paese *</label>
                     <input name="country" type="text" class="shadow-sm block w-full rounded-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#ff315d] sm:text-sm sm:leading-6 lg:w-[13rem]" placeholder="Italia">
                 </div>
+                <input type="hidden" name="metadata" value="{}">
             </div>
             <div class="map__container mt-4">
                 <span>Seleziona la posizione dell'immobile sulla mappa</span>
@@ -148,6 +149,16 @@
     });
 </script>
 <script>
+    var metadata = {};
+    $('input[name="address"], input[name="city"], input[name="country"]').change((e) => {
+        metadata = {
+            address: $('input[name="address"]').val(),
+            city: $('input[name="city"]').val(),
+            country: $('input[name="country"]').val()
+        };
+        $('input[name="metadata"]').val(JSON.stringify(metadata));
+    });
+
     $('#select_position_btn').click((e) => {
         e.preventDefault();
         $('.map__container').toggleClass('hidden');

@@ -4,11 +4,8 @@
             <a href="/" class="ml-2 text-lg font-semibold">Airbnb</a>
         </div>
         <ul class="flex items-center space-x-4">
-            <li><a href="/" class="hover:text-slate-100">Home</a></li>
         </ul>
         <div class="flex items-center space-x-4">
-            
-            
             {% if request.user.is_authenticated %}
                 <a href="/account" class="flex flex-row gap-2 items-center">
                     <span>Account</span>
