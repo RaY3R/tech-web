@@ -1,0 +1,186 @@
+#search_box {
+    position: relative;
+}
+#search_box input{
+    border: none;
+    outline: none;
+}
+
+#search_box > div {
+    padding: 4px 20px;
+}
+
+#search_box input:focus {
+    box-shadow: none;
+}
+
+#search__submit{
+    background-color: #ff315d;
+    border: none;
+    padding: 4px 20px;
+}
+
+#search__submit:hover {
+    background-color: #be2344;
+}
+
+#search_box, #calendar__popup {
+    max-width: 900px;
+}
+
+#calendar__popup {
+    z-index: 1000;
+    padding-top: 40px!important;
+    position: absolute;
+}
+
+#people__popup {
+    position: absolute;
+    background-color: #fff;
+    z-index: 1000;
+    padding-top: 40px!important;
+    padding-inline: 30px!important;
+    transform: translate(calc(900px/2 + 30%), 5rem);
+}
+
+#autocomplete_location__popup {
+    background-color: #fff;
+    z-index: 1000;
+    padding-block: 20px!important;
+    padding-inline: 30px!important;
+    min-width: 300px;
+    transform: translateY(5rem);
+}
+
+#calendars__container table {
+    border-collapse: collapse!important;
+}
+
+#calendars__container table td {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    border-collapse: collapse;
+}
+
+.calendar_days span {
+    padding: 10px 12px;
+}
+
+.calendar_days span:hover {
+    border: 1px solid #333333;
+    cursor: pointer;
+    border-radius: 100px;
+}
+
+.calendar_days span.selected {
+    background-color: #222222;
+    border-radius: 100px;
+    color: #fff;
+}
+
+.calendar_days td.selected-gray {
+    background-color: #fafafa;
+    transition: background-color 0.3s linear;
+}
+
+.calendar_days .selected-gray:nth-last-child(1 of .selected-gray) {
+    border-radius: 0 100px 100px 0;
+}
+
+.calendar_days .selected-gray:nth-child(1 of .selected-gray) {
+    border-radius: 100px 0 0 100px;
+}
+
+.insertion__card {
+    width: 20rem;
+}
+
+@media screen and (max-width: 800px) {
+    .insertion__card {
+        width: 100%;
+    }
+}
+
+.insertion__card .card__image {
+    min-width: 20rem;
+    height: 20rem;
+    object-fit: cover;
+}
+
+.marker {
+    border-radius: 20%;
+    cursor: pointer;
+    background-color: #fff;
+    color: #000;
+    text-align: center;
+    padding: 3px 10px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.signup__form input[type='text'], input[type='email'], input[type='password'], input[type='date'], 
+.login__form input[type='text'], input[type='password']{
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 5px;
+}
+
+.helptext {
+    font-size: 0.8rem;
+    color: #444;
+}
+
+.profile__pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    object-fit: cover;
+}
+
+.account__nav_items a {
+    transition: all 0.1s ease-in-out;
+}
+
+.account__nav_items a:hover {
+    font-weight: bold;
+    transform: translateX(3px);
+    transition: transform 0.1s ease-in-out;
+}
+
+.account__nav_items a.active {
+    font-weight: bold;
+}
+
+.services__container {
+    gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 1000px;
+}
+
+.services__item {
+    padding: 5px 10px;
+    border: 1px solid #f0f0f0;
+    border-radius: 20px;
+    transition: all 0.1s ease-in-out;
+}
+
+.services__item:hover {
+    border: 1px solid #000000;
+    transition: all 0.1s ease-in-out;
+    cursor: pointer;
+}
+
+.services__item.active {
+    border: 1px solid #000000;
+    transition: all 0.1s ease-in-out;
+    cursor: pointer;
+}
+
+.error__message, .errorlist li {
+    padding: 5px 20px;
+    background-color: #ff315d;
+    border-radius: 10px;
+    color: white;
+    margin-top: 5px;
+}

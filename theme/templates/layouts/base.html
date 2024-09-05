@@ -1,0 +1,38 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0 minimal-ui"/>
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.5.1/mapbox-gl.css" rel="stylesheet">
+    {% block tag %}{% endblock tag %}
+    <style>
+        body {
+            font-family: "Nunito", sans-serif;
+        }
+    </style>
+    {% tailwind_css %}
+    <link rel="stylesheet" href="{% static 'css/app.css' %}" />
+    <title>Airbnb - {% block title %}{% endblock %}</title>
+  </head>
+  <body>
+    {% include 'partials/header.html' %}
+    <div class="w-full min-h-svh">
+      {% block content %}
+      {% endblock content %} 
+    </div>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    {% block scripts %}{% endblock scripts %}
+    {% include 'partials/footer.html' %}
+  </body>
+</html>

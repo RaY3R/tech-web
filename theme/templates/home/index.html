@@ -1,7 +1,48 @@
-{% extends 'base.html' %}
-
-{% block title %}Home{% endblock %}
-
-{% block content %}
-    CONTENT...
+{% extends 'layouts/base.html' %} {% block title %}Home{% endblock %} {% block tags %}
+{% endblock %} 
+{% block content %} 
+  {% include 'partials/search_bar.html' %}
+  <div class="container w-full p-10">
+    <h1 class="text-4xl font-bold text-center">Destinazioni in evidenza</h1>
+    <div id="results__container" class="flex flex-wrap mt-4 gap-8 m-auto p-2">
+    </div>
+  </div>
+{% endblock %}
+{% block scripts %}
+<script>
+  $(document).ready(function() {
+    $.ajax('/api/featured', {
+      method: 'GET',
+      success: function(data) {
+          $('#loading__spinner').hide();
+          data.data.forEach(result => {
+              $('#results__container').append(`
+              <div class="insertion__card">
+                  <a href="insertion/${result.uuid}${document.location.search.toString()}" class="card__link">
+                      <img
+                          src="${result.cover_image}"
+                          alt="${result.title}"
+                          class="card__image rounded-xl"
+                      />
+                      <div class="card__content mt-3">
+                          <div class="flex items-center gap-2">
+                              <p class="text-lg font-semibold">${result.rating.toFixed(1)}</p>
+                              <div class="flex gap-2 text-[#ff315d]">
+                                  ${'★'.repeat(result.rating)}
+                              </div>
+                          </div>
+                          <h3 class="card__title font-bold">${result.title}</h3>
+                          <div class="flex items-center"> 
+                              <ion-icon name="pin"></ion-icon> 
+                              <p class="font-semibold"> ${result.metadata.city}</p> 
+                          </div>
+                          <p>Host: ${result.host}</p>
+                      </div>
+                  </a>
+              </div>`);
+          })
+      }
+  });
+  });
+</script>
 {% endblock %}

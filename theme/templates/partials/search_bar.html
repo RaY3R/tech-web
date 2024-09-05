@@ -1,0 +1,119 @@
+{% load static %}
+<div
+  id="search_box"
+  class="rounded-full flex border-gray-100 border-2 justify-between m-auto my-9 p-1 bg-gray-100"
+>
+  <div id="search__place" class="flex justify-center rounded-full flex-col max-w-56">
+    <input id="destination__input" type="text" placeholder="Destinazione" class="bg-transparent" />
+  </div>
+  <div
+    id="search__start_date"
+    class="hover:bg-slate-200 transition-all rounded-full cursor-pointer overflow-hidden whitespace-nowrap text-ellipsis"
+  >
+    <span class="font-semibold text-md block">Check-in</span>
+    <span id="checkin_date" class="text-sm">Seleziona la data</span>
+  </div>
+  <div
+    id="search__end_date"
+    class="flex-col hover:bg-slate-200 transition-all rounded-full cursor-pointer overflow-hidden whitespace-nowrap text-ellipsis"
+  >
+    <span class="font-semibold text-md block">Check-out</span>
+    <span id="checkout_date" class="text-sm">Seleziona la data</span>
+  </div>
+  <div
+    id="search__people"
+    class="flex-col hover:bg-slate-200 transition-all rounded-full cursor-pointer overflow-hidden whitespace-nowrap text-ellipsis"
+  >
+    <span class="font-semibold text-md block">Persone</span>
+    <span id="search_people_number" class="text-sm">Seleziona il numero</span>
+  </div>
+  <div
+    id="search__submit"
+    class="flex items-center gap-2 flex-row rounded-full text-white transition-all cursor-pointer"
+  >
+    <span class="flex-1 xl:b max-xl:hidden">Cerca</span>
+    <ion-icon name="search" class="flex-1"></ion-icon>
+  </div>
+  <div
+    id="calendar__popup"
+    class="rounded-3xl text-center shadow-2xl translate-y-20 bg-white hidden"
+  >
+    <h4 class="text-xl font-semibold">Seleziona le date</h4>
+    <div id="calendar__controls" class="flex justify-between">
+      <button id="calendar__prev" class="text-lg font-semibold">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </button>
+      <button id="calendar__next" class="text-lg font-semibold">
+        <ion-icon name="chevron-forward-outline"></ion-icon>
+      </button>
+    </div>
+    <div
+      id="calendars__container"
+      class="flex flex-row justify-center flex-wrap"
+    >
+      <div id="left__calendar" class="flex-1">
+        <h3 class="month_title text-xl font-semibold capitalize"></h3>
+        <table class="table table-fixed m-auto">
+          <thead>
+            <tr class="calendar_weekdays text-gray-400">
+              <td>Lun</td>
+              <td>Mar</td>
+              <td>Mer</td>
+              <td>Gio</td>
+              <td>Ven</td>
+              <td>Sab</td>
+              <td>Dom</td>
+            </tr>
+          </thead>
+          <tbody class="calendar__table"></tbody>
+        </table>
+      </div>
+      <div id="right__calendar" class="flex-1">
+        <h3 class="month_title text-xl font-semibold capitalize"></h3>
+        <table class="table table-fixed m-auto">
+          <thead>
+            <tr class="calendar_weekdays text-gray-400">
+              <td>Lun</td>
+              <td>Mar</td>
+              <td>Mer</td>
+              <td>Gio</td>
+              <td>Ven</td>
+              <td>Sab</td>
+              <td>Dom</td>
+            </tr>
+          </thead>
+          <tbody class="calendar__table"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div
+    id="people__popup"
+    class="rounded-3xl text-center shadow-2xl bg-white hidden"
+  >
+    <h4 class="text-xl font-semibold">Seleziona il numero di persone</h4>
+    <div class="flex flex-row gap-5 justify-between align-middle my-10">
+      <button id="remove_people">
+        <ion-icon name="remove"></ion-icon>
+      </button>
+      <span id="people_number" class="text-xl font-bold" field-value="0"
+        >0</span
+      >
+      <button id="add_people">
+        <ion-icon name="add"></ion-icon>
+      </button>
+    </div>
+    <span class="text-gray-300"
+      >La ricerca accetta un massimo di 30 guests</span
+    >
+  </div>
+  <div id="autocomplete_location__popup" class="rounded-3xl shadow-2xl absolute bg-white hidden">
+      <h4 class="text-md font-semibold mb-2">Destinazioni</h4>
+      <div id="autocomplete_results" class="flex flex-col gap-4 "></div>
+  </div>
+</div>
+
+{% block scripts %}
+<script type="text/javascript" src="https://momentjs.com/downloads/moment-with-locales.min.js"></script>
+<script type="text/javascript" defer src="{% static 'js/calendar.js' %}"></script>
+{% endblock %}

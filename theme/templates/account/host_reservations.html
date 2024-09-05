@@ -1,0 +1,57 @@
+{% extends 'layouts/account.html' %}
+
+{% block tag %}
+{% endblock %}
+
+{% block title %}Gestisci prenotazioni{% endblock %}
+
+{% block content1 %}
+<div class="container w-full">
+    <h1 class="text-2xl font-bold">Gestisci prenotazioni</h1>
+    <div class="errorlist">
+    </div>
+    <div class="flex flex-col gap-4">
+        {% for reservation in reservations %}
+        <div class="flex flex-row flex-wrap gap-4 p-10 justify-between shadow-lg">
+            <div class="flex flex-wrap gap-5">
+                <img src="{{ reservation.insertion.cover_image.url }}" alt="{{ reservation.insertion.title }}" class="w-52 h-52 object-cover rounded-lg">
+                <div class="flex flex-col gap-2">
+                    <p class="font-bold"><a href="{% url 'user:editinsertion' reservation.insertion.uuid %}" class="text-blue-500">{{ reservation.insertion.title }}</a></p>
+                    <p>Check-in: {{ reservation.start_date }}</p>
+                    <p>Check-out: {{ reservation.end_date }}</p>
+                    <p>Numero di ospiti: {{ reservation.guests }}</p>
+                    <p>Pagato: {% if reservation.is_paid %}Si{%else%}No{% endif %}</p>
+                    <p>Guest: {{ reservation.user }}</p>
+                    <p class="font-semibold text-xl">Totale: {{ reservation.total_price }} €</p>
+                </div>
+            </div>
+            <div class="flex flex-col gap-2 justify-end">
+                <button onclick="deleteReservation({{ reservation.id }})" class="bg-[#ff315d] text-white p-2 rounded-lg w-full hover:bg-[#be2344] transition-all">Annulla prenotazione</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript" defer="defer">
+    const deleteReservation = function(id) {
+        $.ajax({
+            type: 'POST',
+            url: '/api/account/reservation/delete/',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                reservationId: id,
+            },
+            success: function(response) {
+                location.reload();
+            },
+            error: function(response) {
+                const errorList = document.querySelector('.errorlist');
+                errorList.innerHTML = '';
+                errorList.innerHTML += `<p class="error__message">${response.responseJSON.error}</p>`;
+            }
+        });
+    }
+</script>
+{% endblock %}

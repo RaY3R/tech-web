@@ -1,0 +1,69 @@
+{% extends "layouts/base.html" %}
+{% block title %}Account{% endblock %} 
+{% load custom_tags %}
+{% block tags %}
+{% endblock %}
+{% block content %}
+<div class="w-full flex flex-col min-h-lvh">
+    <div class="flex flex-row flex-wrap">
+        <div class="min-w-[300px] shadow-2xl p-10 max-lg:flex-1 rounded-xl m-10 h-fit">
+            <h4 class="text-lg font-bold p-4">Account</h4>
+            <div class="border-b-2 rounded-md"></div>
+            <div class="account__nav_items flex flex-col">
+                <a href="{% url 'user:profile' %}" class="{% url_active 'user:profile' %} p-4 flex items-center gap-2 "><ion-icon name="person-outline" ></ion-icon> Il tuo profilo</a>
+                <a href="{% url 'user:bookings' %}" class="{% url_active 'user:bookings' %} p-4 flex items-center gap-2"><ion-icon name="home-outline" ></ion-icon> I tuoi soggiorni</a>
+                <a href="{% url 'user:changepassword' %}" class="{% url_active 'user:changepassword' %} p-4 flex items-center gap-2"><ion-icon name="key-outline" ></ion-icon>Cambia password</a>
+                <a href="{% url 'user:logout' %}" class="p-4 text-red-400 flex items-center gap-2"><ion-icon name="exit-outline" ></ion-icon>Esci</a>
+            </div>
+            {% if request.user.role == 'HOST' %}
+            <h4 class="text-lg font-bold p-4">Impostazioni Host</h4>
+            <div class="border-b-2 rounded-md"></div>
+            <div class="account__nav_items flex flex-col">
+                <a href="{% url 'user:myinsertions' %}" class="{% url_active 'user:myinsertions' %} p-4 flex items-center gap-2"><ion-icon name="home-outline" ></ion-icon> I tuoi immobili</a>
+                <a href="{% url 'user:reservations' %}" class="{% url_active 'user:reservations' %} p-4 flex items-center gap-2"><ion-icon name="home-outline" ></ion-icon> Gestisci prenotazioni</a>
+                <a href="{% url 'user:paymentsettings' %}" class="{% url_active 'user:paymentsettings' %} p-4 flex items-center gap-2"><ion-icon name="cash-outline" ></ion-icon> Pagamento</a>
+                <a href="{% url 'user:newinsertion' %}" class="{% url_active 'user:newinsertion' %} p-4 flex items-center gap-2"><ion-icon name="add-outline" ></ion-icon> Aggiungi un immobile</a>
+            </div>
+            {% endif %}
+        </div>
+        <div class="p-8 flex-grow ">
+            {% block content1 %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+    const profilePic = document.querySelector('#open_pic_modal');
+    const picModal = document.querySelector('.pic__modal');
+    const modalClose = document.querySelector('.modal__close');
+
+    profilePic.addEventListener('click', () => {
+        picModal.classList.remove('hidden');
+    });
+
+    modalClose.addEventListener('click', () => {
+        picModal.classList.add('hidden');
+    });
+
+    $('#change_pic_form').submit(function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        $.ajax({
+            type: 'POST',
+            url: '/api/account/picture/',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                location.reload();
+            },
+            error: function(error) {
+                $('#error_modal_message').text(error.responseJSON.error);
+            }
+        });
+    });
+
+</script>
+{% endblock %}

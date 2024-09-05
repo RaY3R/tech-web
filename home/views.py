@@ -1,6 +1,11 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 
 # Create your views here.
-def hello_view(request):
+def home_view(request):
     return render(request, 'home/index.html')
+
+def results_view(request):
+    context = {
+        "user": request.session
+    }
+    return render(request, 'home/results.html', context)

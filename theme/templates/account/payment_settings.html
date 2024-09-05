@@ -1,0 +1,33 @@
+{% extends 'layouts/account.html' %}
+
+{% block tag %}
+{% endblock %}
+
+{% block title %}Modifica immobile{% endblock %}
+
+{% block content1 %}
+<div class="w-full flex flex-col gap-5 items-start">
+    <h1 class="text-3xl font-bold">Impostazioni pagamento</h1>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="error__message">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    <form action="" method="post" class="w-full flex flex-col gap-5 md:w-[23rem]">
+        {% csrf_token %}
+        <div class="flex flex-row gap-5 ">
+            <div class="flex flex-col gap-5 w-full">
+                {{ form.iban.label }}
+                {{ form.iban }}
+            </div>
+        </div>
+        <div class="flex flex-row gap-5">
+            <div class="flex flex-col gap-5 w-full">
+                {{ form.tax_code.label }}
+                {{ form.tax_code}}
+            </div>
+        </div>
+        <button type="submit" class="p-2 px-10 bg-black text-white rounded-md w-fit">Salva</button>
+    </form>
+</div>
+{% endblock %}
